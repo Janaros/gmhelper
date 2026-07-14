@@ -68,9 +68,11 @@ public partial class App : Application
         services.AddSingleton<IImageLibraryService, ImageLibraryService>();
         services.AddSingleton<IPlayerService, PlayerService>();
         services.AddSingleton<IStatFieldService, StatFieldService>();
+        services.AddSingleton<IMonsterService, MonsterService>();
 
         services.AddSingleton<ViewModels.ICampaignDetailViewModelFactory, ViewModels.CampaignDetailViewModelFactory>();
         services.AddSingleton<ViewModels.CampaignListViewModel>();
+        services.AddSingleton<ViewModels.MonsterDatabaseViewModel>();
         services.AddSingleton<ViewModels.ShellViewModel>();
         services.AddSingleton<MainWindow>();
 

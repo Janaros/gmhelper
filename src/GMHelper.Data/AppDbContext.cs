@@ -14,6 +14,7 @@ public class AppDbContext : DbContext
     public DbSet<ImageAsset> ImageAssets => Set<ImageAsset>();
     public DbSet<Player> Players => Set<Player>();
     public DbSet<StatField> StatFields => Set<StatField>();
+    public DbSet<Monster> Monsters => Set<Monster>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

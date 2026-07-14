@@ -15,6 +15,9 @@
         <DataTemplate DataType="{x:Type vm:CampaignDetailViewModel}">
             <views:CampaignDetailView />
         </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:MonsterDatabaseViewModel}">
+            <views:MonsterDatabaseView />
+        </DataTemplate>
     </Window.Resources>
 
     <ContentControl Content="{Binding CurrentViewModel}" />
