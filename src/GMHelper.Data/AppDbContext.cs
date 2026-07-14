@@ -12,6 +12,8 @@ public class AppDbContext : DbContext
     public DbSet<Campaign> Campaigns => Set<Campaign>();
     public DbSet<PdfDocument> PdfDocuments => Set<PdfDocument>();
     public DbSet<ImageAsset> ImageAssets => Set<ImageAsset>();
+    public DbSet<Player> Players => Set<Player>();
+    public DbSet<StatField> StatFields => Set<StatField>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

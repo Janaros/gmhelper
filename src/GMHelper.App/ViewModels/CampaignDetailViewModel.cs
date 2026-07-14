@@ -10,20 +10,27 @@ public partial class CampaignDetailViewModel : ObservableObject
 
     public PdfLibraryViewModel PdfLibrary { get; }
     public ImageLibraryViewModel ImageLibrary { get; }
+    public RosterViewModel Roster { get; }
 
     public event EventHandler? BackRequested;
 
-    public CampaignDetailViewModel(Campaign campaign, PdfLibraryViewModel pdfLibrary, ImageLibraryViewModel imageLibrary)
+    public CampaignDetailViewModel(
+        Campaign campaign,
+        PdfLibraryViewModel pdfLibrary,
+        ImageLibraryViewModel imageLibrary,
+        RosterViewModel roster)
     {
         Campaign = campaign;
         PdfLibrary = pdfLibrary;
         ImageLibrary = imageLibrary;
+        Roster = roster;
     }
 
     public async Task InitializeAsync()
     {
         await PdfLibrary.InitializeAsync();
         await ImageLibrary.InitializeAsync();
+        await Roster.InitializeAsync();
     }
 
     [RelayCommand]
