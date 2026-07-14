@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:views="clr-namespace:GMHelper.App.Views"
              mc:Ignorable="d">
     <Grid Margin="12">
         <Grid.RowDefinitions>
@@ -15,17 +16,22 @@
             <TextBlock Text="{Binding Campaign.Name}" FontSize="18" FontWeight="Bold" Margin="12,0,0,0" VerticalAlignment="Center" />
         </StackPanel>
 
-        <TabControl Grid.Row="1" ItemsSource="{Binding Tabs}">
-            <TabControl.ItemTemplate>
-                <DataTemplate>
-                    <TextBlock Text="{Binding Header}" />
-                </DataTemplate>
-            </TabControl.ItemTemplate>
-            <TabControl.ContentTemplate>
-                <DataTemplate>
-                    <TextBlock Text="{Binding PlaceholderText}" Margin="12" Foreground="Gray" />
-                </DataTemplate>
-            </TabControl.ContentTemplate>
+        <TabControl Grid.Row="1">
+            <TabItem Header="PDFs">
+                <views:PdfLibraryView DataContext="{Binding PdfLibrary}" />
+            </TabItem>
+            <TabItem Header="Bilder">
+                <TextBlock Text="Kommt in Phase 4 (Bild-Bibliothek + Zweitbildschirm)." Margin="12" Foreground="Gray" />
+            </TabItem>
+            <TabItem Header="Spieler">
+                <TextBlock Text="Kommt in Phase 5 (Roster mit flexiblen Stats)." Margin="12" Foreground="Gray" />
+            </TabItem>
+            <TabItem Header="Kampf">
+                <TextBlock Text="Kommt in Phase 8 (Kampf-Tracker)." Margin="12" Foreground="Gray" />
+            </TabItem>
+            <TabItem Header="Notizen">
+                <TextBlock Text="Kommt in Phase 9 (Markdown-Session-Notizen)." Margin="12" Foreground="Gray" />
+            </TabItem>
         </TabControl>
     </Grid>
 </UserControl>

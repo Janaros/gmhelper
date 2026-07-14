@@ -10,6 +10,9 @@
 ## App runtime data - lives inside the project folder but must not be committed
 Data/
 
+## Local secrets - never commit license keys
+syncfusion-license.local.txt
+
 ## EF Core
 *.db-shm
 *.db-wal

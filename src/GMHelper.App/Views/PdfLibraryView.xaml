@@ -1,0 +1,40 @@
+<UserControl x:Class="GMHelper.App.Views.PdfLibraryView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:GMHelper.App"
+             xmlns:syncfusion="clr-namespace:Syncfusion.Windows.PdfViewer;assembly=Syncfusion.PdfViewer.WPF"
+             mc:Ignorable="d">
+    <Grid Margin="8">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="220" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <Grid Grid.Column="0" Margin="0,0,8,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <Button Grid.Row="0" Content="PDF hinzufügen" Margin="0,0,0,8" Click="AddPdfButton_Click" />
+
+            <TextBlock Grid.Row="1"
+                       Text="{Binding StatusMessage}"
+                       Foreground="Red"
+                       TextWrapping="Wrap"
+                       Margin="0,0,0,8"
+                       Visibility="{Binding StatusMessage, Converter={x:Static local:NullToVisibilityConverter.Instance}}" />
+
+            <ListBox x:Name="PdfList"
+                     Grid.Row="2"
+                     ItemsSource="{Binding Pdfs}"
+                     SelectedItem="{Binding SelectedPdf}"
+                     DisplayMemberPath="FileName" />
+        </Grid>
+
+        <syncfusion:PdfViewerControl x:Name="PdfViewer" Grid.Column="1" />
+    </Grid>
+</UserControl>

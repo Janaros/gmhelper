@@ -58,3 +58,9 @@ EF-Core-Migrationen (Startprojekt ist `GMHelper.App`, da dort die Design-Time-Fa
 ```
 dotnet ef migrations add <Name> --project src/GMHelper.Data --startup-project src/GMHelper.App --output-dir Migrations
 ```
+
+## PDF-Engine: Syncfusion
+
+PDF-Anzeige und Stift-Annotation laufen über `Syncfusion.PdfViewer.WPF` (`Syncfusion.Windows.PdfViewer.PdfViewerControl`). Bewusste Entscheidung: kommerzielle Community-License-Komponente statt einer lizenzfreien Alternative (siehe Abwägung in der Planungs-Session) — falls das Projekt kommerzialisiert wird und die Umsatz-/Entwicklerzahl-Grenze der Community License überschritten wird, muss auf eine kostenpflichtige Syncfusion-Lizenz oder eine der geprüften Alternativen (PDF.js/WebView2, natives WPF-InkCanvas + PDFium/PDFsharp) migriert werden.
+
+Lizenzschlüssel wird **nicht** eingecheckt: `App.xaml.cs` liest optional `<Projektordner>\syncfusion-license.local.txt` (per `.gitignore` ausgeschlossen) und registriert ihn via `Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(...)`. Ohne diese Datei läuft die App im unlizenzierten Trial-Modus (Hinweisdialog/Wasserzeichen), stürzt aber nicht ab.

@@ -16,6 +16,8 @@ public partial class App : Application
 
     protected override void OnStartup(StartupEventArgs e)
     {
+        RegisterSyncfusionLicense();
+
         var appPaths = new AppPaths(ResolveDataRoot());
         Directory.CreateDirectory(appPaths.DataRoot);
         Directory.CreateDirectory(appPaths.LogsFolder);
@@ -51,6 +53,7 @@ public partial class App : Application
             options.UseSqlite($"Data Source={appPaths.DatabaseFilePath}"));
 
         services.AddSingleton<ICampaignService, CampaignService>();
+        services.AddSingleton<IPdfLibraryService, PdfLibraryService>();
 
         services.AddSingleton<ViewModels.ICampaignDetailViewModelFactory, ViewModels.CampaignDetailViewModelFactory>();
         services.AddSingleton<ViewModels.CampaignListViewModel>();
@@ -59,11 +62,33 @@ public partial class App : Application
     }
 
     /// <summary>
+    /// Reads a Syncfusion Community License key from a local, gitignored file at the repo root
+    /// (syncfusion-license.local.txt) if present. Without it, Syncfusion controls run in an
+    /// unlicensed trial state (dialog/watermark) instead of the app crashing.
+    /// </summary>
+    private static void RegisterSyncfusionLicense()
+    {
+        var licenseFilePath = Path.Combine(ResolveRepoRoot(), "syncfusion-license.local.txt");
+        if (!File.Exists(licenseFilePath))
+        {
+            return;
+        }
+
+        var licenseKey = File.ReadAllText(licenseFilePath).Trim();
+        if (!string.IsNullOrEmpty(licenseKey))
+        {
+            Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(licenseKey);
+        }
+    }
+
+    /// <summary>
     /// Dev-time layout: walk up from the build output folder to the repo root (marked by the
     /// solution file) so runtime data lives at &lt;repo&gt;/Data regardless of build configuration.
     /// A future installed/published build can swap this for a fixed relative path instead.
     /// </summary>
-    private static string ResolveDataRoot()
+    private static string ResolveDataRoot() => Path.Combine(ResolveRepoRoot(), "Data");
+
+    private static string ResolveRepoRoot()
     {
         var directory = new DirectoryInfo(AppContext.BaseDirectory);
         while (directory is not null &&
@@ -73,8 +98,7 @@ public partial class App : Application
             directory = directory.Parent;
         }
 
-        var repoRoot = directory?.FullName ?? AppContext.BaseDirectory;
-        return Path.Combine(repoRoot, "Data");
+        return directory?.FullName ?? AppContext.BaseDirectory;
     }
 
     protected override void OnExit(ExitEventArgs e)
