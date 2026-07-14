@@ -1,6 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
+    <!-- UseWindowsForms below adds a global "using System.Windows.Forms;" which collides with
+         WPF types of the same name (Application, UserControl, ...). We only need the Forms
+         Screen class (fully-qualified) for secondary-monitor detection, so drop the global using. -->
+    <Using Remove="System.Windows.Forms" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\GMHelper.Core\GMHelper.Core.csproj" />
     <ProjectReference Include="..\GMHelper.Data\GMHelper.Data.csproj" />
     <ProjectReference Include="..\GMHelper.Services\GMHelper.Services.csproj" />
@@ -24,6 +31,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
   </PropertyGroup>
 
 </Project>

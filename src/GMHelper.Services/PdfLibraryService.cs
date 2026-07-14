@@ -23,7 +23,7 @@ public class PdfLibraryService : IPdfLibraryService
         var pdfsFolder = _appPaths.CampaignPdfsFolder(campaignId);
         Directory.CreateDirectory(pdfsFolder);
 
-        var destinationPath = ResolveUniqueDestinationPath(pdfsFolder, Path.GetFileName(sourceFilePath));
+        var destinationPath = FileNaming.ResolveUniqueDestinationPath(pdfsFolder, Path.GetFileName(sourceFilePath));
         File.Copy(sourceFilePath, destinationPath);
 
         var maxDisplayOrder = await db.PdfDocuments
@@ -80,27 +80,5 @@ public class PdfLibraryService : IPdfLibraryService
         var backupPath = filePath + ".bak";
         File.Copy(filePath, backupPath, overwrite: true);
         return Task.CompletedTask;
-    }
-
-    private static string ResolveUniqueDestinationPath(string folder, string fileName)
-    {
-        var destinationPath = Path.Combine(folder, fileName);
-        if (!File.Exists(destinationPath))
-        {
-            return destinationPath;
-        }
-
-        var nameWithoutExtension = Path.GetFileNameWithoutExtension(fileName);
-        var extension = Path.GetExtension(fileName);
-
-        var counter = 1;
-        string candidatePath;
-        do
-        {
-            candidatePath = Path.Combine(folder, $"{nameWithoutExtension} ({counter}){extension}");
-            counter++;
-        } while (File.Exists(candidatePath));
-
-        return candidatePath;
     }
 }

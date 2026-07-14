@@ -21,7 +21,7 @@
                 <views:PdfLibraryView DataContext="{Binding PdfLibrary}" />
             </TabItem>
             <TabItem Header="Bilder">
-                <TextBlock Text="Kommt in Phase 4 (Bild-Bibliothek + Zweitbildschirm)." Margin="12" Foreground="Gray" />
+                <views:ImageLibraryView DataContext="{Binding ImageLibrary}" />
             </TabItem>
             <TabItem Header="Spieler">
                 <TextBlock Text="Kommt in Phase 5 (Roster mit flexiblen Stats)." Margin="12" Foreground="Gray" />

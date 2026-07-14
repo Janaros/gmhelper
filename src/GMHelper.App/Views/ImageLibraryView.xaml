@@ -1,0 +1,58 @@
+<UserControl x:Class="GMHelper.App.Views.ImageLibraryView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:GMHelper.App"
+             mc:Ignorable="d">
+    <Grid Margin="8">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="260" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <Grid Grid.Column="0" Margin="0,0,8,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <ComboBox Grid.Row="0"
+                      Margin="0,0,0,8"
+                      ItemsSource="{Binding Categories}"
+                      SelectedItem="{Binding SelectedCategory}" />
+
+            <Button Grid.Row="1" Content="Bild hinzufügen" Margin="0,0,0,8" Click="AddImageButton_Click" />
+
+            <TextBlock Grid.Row="2"
+                       Text="{Binding StatusMessage}"
+                       Foreground="Red"
+                       TextWrapping="Wrap"
+                       Margin="0,0,0,8"
+                       Visibility="{Binding StatusMessage, Converter={x:Static local:NullToVisibilityConverter.Instance}}" />
+
+            <ListBox x:Name="ImageList"
+                     Grid.Row="3"
+                     ItemsSource="{Binding Images}"
+                     SelectedItem="{Binding SelectedImage}"
+                     DisplayMemberPath="FileName" />
+        </Grid>
+
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="0,0,0,8">
+                <Button Content="Zweitbildschirm öffnen" Command="{Binding OpenSecondaryDisplayCommand}" Padding="8,4" />
+                <Button Content="An Spieler zeigen" Margin="8,0,0,0" Command="{Binding ShowSelectedImageToPlayersCommand}" Padding="8,4" />
+                <ToggleButton Content="Blackout" Margin="8,0,0,0" IsChecked="{Binding IsBlackedOut}" Padding="8,4" />
+            </StackPanel>
+
+            <Image x:Name="PreviewImage" Grid.Row="1" Stretch="Uniform" />
+        </Grid>
+    </Grid>
+</UserControl>
