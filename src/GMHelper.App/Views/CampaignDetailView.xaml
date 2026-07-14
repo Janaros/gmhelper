@@ -24,7 +24,7 @@
                 <views:ImageLibraryView DataContext="{Binding ImageLibrary}" />
             </TabItem>
             <TabItem Header="Spieler">
-                <TextBlock Text="Kommt in Phase 5 (Roster mit flexiblen Stats)." Margin="12" Foreground="Gray" />
+                <views:RosterView DataContext="{Binding Roster}" />
             </TabItem>
             <TabItem Header="Kampf">
                 <TextBlock Text="Kommt in Phase 8 (Kampf-Tracker)." Margin="12" Foreground="Gray" />
