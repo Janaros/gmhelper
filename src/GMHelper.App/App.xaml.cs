@@ -52,7 +52,9 @@ public partial class App : Application
 
         services.AddSingleton<ICampaignService, CampaignService>();
 
-        services.AddSingleton<ViewModels.MainWindowViewModel>();
+        services.AddSingleton<ViewModels.ICampaignDetailViewModelFactory, ViewModels.CampaignDetailViewModelFactory>();
+        services.AddSingleton<ViewModels.CampaignListViewModel>();
+        services.AddSingleton<ViewModels.ShellViewModel>();
         services.AddSingleton<MainWindow>();
     }
 
