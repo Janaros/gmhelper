@@ -26,11 +26,13 @@ public partial class ShellViewModel : ObservableObject
         await _campaignListViewModel.InitializeAsync();
     }
 
-    private void OnCampaignOpened(object? sender, Campaign campaign)
+    private async void OnCampaignOpened(object? sender, Campaign campaign)
     {
         var detail = _detailFactory.Create(campaign);
         detail.BackRequested += OnDetailBackRequested;
         CurrentViewModel = detail;
+
+        await detail.InitializeAsync();
     }
 
     private void OnDetailBackRequested(object? sender, EventArgs e)

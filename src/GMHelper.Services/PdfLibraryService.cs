@@ -1,0 +1,98 @@
+using GMHelper.Core.Abstractions;
+using GMHelper.Core.Entities;
+using GMHelper.Data;
+using Microsoft.EntityFrameworkCore;
+
+namespace GMHelper.Services;
+
+public class PdfLibraryService : IPdfLibraryService
+{
+    private readonly IDbContextFactory<AppDbContext> _dbContextFactory;
+    private readonly IAppPaths _appPaths;
+
+    public PdfLibraryService(IDbContextFactory<AppDbContext> dbContextFactory, IAppPaths appPaths)
+    {
+        _dbContextFactory = dbContextFactory;
+        _appPaths = appPaths;
+    }
+
+    public async Task<PdfDocument> AddPdfToCampaignAsync(int campaignId, string sourceFilePath, CancellationToken cancellationToken = default)
+    {
+        await using var db = await _dbContextFactory.CreateDbContextAsync(cancellationToken);
+
+        var pdfsFolder = _appPaths.CampaignPdfsFolder(campaignId);
+        Directory.CreateDirectory(pdfsFolder);
+
+        var destinationPath = ResolveUniqueDestinationPath(pdfsFolder, Path.GetFileName(sourceFilePath));
+        File.Copy(sourceFilePath, destinationPath);
+
+        var maxDisplayOrder = await db.PdfDocuments
+            .Where(p => p.CampaignId == campaignId)
+            .Select(p => (int?)p.DisplayOrder)
+            .MaxAsync(cancellationToken) ?? -1;
+
+        var pdfDocument = new PdfDocument
+        {
+            CampaignId = campaignId,
+            FileName = Path.GetFileName(destinationPath),
+            StoredRelativePath = Path.GetRelativePath(_appPaths.DataRoot, destinationPath),
+            DisplayOrder = maxDisplayOrder + 1,
+            LastViewedPage = 1,
+            AddedAt = DateTime.UtcNow,
+        };
+
+        db.PdfDocuments.Add(pdfDocument);
+        await db.SaveChangesAsync(cancellationToken);
+
+        return pdfDocument;
+    }
+
+    public async Task<IReadOnlyList<PdfDocument>> GetPdfsForCampaignAsync(int campaignId, CancellationToken cancellationToken = default)
+    {
+        await using var db = await _dbContextFactory.CreateDbContextAsync(cancellationToken);
+        return await db.PdfDocuments
+            .AsNoTracking()
+            .Where(p => p.CampaignId == campaignId)
+            .OrderBy(p => p.DisplayOrder)
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task UpdateLastViewedPageAsync(int pdfDocumentId, int pageNumber, CancellationToken cancellationToken = default)
+    {
+        await using var db = await _dbContextFactory.CreateDbContextAsync(cancellationToken);
+
+        var pdfDocument = await db.PdfDocuments.FindAsync([pdfDocumentId], cancellationToken);
+        if (pdfDocument is null)
+        {
+            return;
+        }
+
+        pdfDocument.LastViewedPage = pageNumber;
+        await db.SaveChangesAsync(cancellationToken);
+    }
+
+    public string GetAbsoluteFilePath(PdfDocument pdfDocument) =>
+        Path.Combine(_appPaths.DataRoot, pdfDocument.StoredRelativePath);
+
+    private static string ResolveUniqueDestinationPath(string folder, string fileName)
+    {
+        var destinationPath = Path.Combine(folder, fileName);
+        if (!File.Exists(destinationPath))
+        {
+            return destinationPath;
+        }
+
+        var nameWithoutExtension = Path.GetFileNameWithoutExtension(fileName);
+        var extension = Path.GetExtension(fileName);
+
+        var counter = 1;
+        string candidatePath;
+        do
+        {
+            candidatePath = Path.Combine(folder, $"{nameWithoutExtension} ({counter}){extension}");
+            counter++;
+        } while (File.Exists(candidatePath));
+
+        return candidatePath;
+    }
+}

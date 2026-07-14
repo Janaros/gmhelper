@@ -10,6 +10,7 @@ public class AppDbContext : DbContext
     }
 
     public DbSet<Campaign> Campaigns => Set<Campaign>();
+    public DbSet<PdfDocument> PdfDocuments => Set<PdfDocument>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
