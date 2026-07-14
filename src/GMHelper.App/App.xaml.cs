@@ -1,5 +1,7 @@
 using System.IO;
 using System.Windows;
+using CommunityToolkit.Mvvm.Messaging;
+using GMHelper.App.Windows;
 using GMHelper.Core.Abstractions;
 using GMHelper.Data;
 using GMHelper.Services;
@@ -41,7 +43,14 @@ public partial class App : Application
             db.Database.Migrate();
         }
 
+        // Created once at startup so its window position/blackout state persists for the
+        // whole session; it stays hidden until the GM opens it via IWindowManager.
+        _host.Services.GetRequiredService<Views.SecondaryDisplayWindow>();
+
+        ShutdownMode = ShutdownMode.OnMainWindowClose;
+
         var mainWindow = _host.Services.GetRequiredService<MainWindow>();
+        MainWindow = mainWindow;
         mainWindow.Show();
     }
 
@@ -52,13 +61,20 @@ public partial class App : Application
         services.AddDbContextFactory<AppDbContext>(options =>
             options.UseSqlite($"Data Source={appPaths.DatabaseFilePath}"));
 
+        services.AddSingleton<IMessenger>(WeakReferenceMessenger.Default);
+
         services.AddSingleton<ICampaignService, CampaignService>();
         services.AddSingleton<IPdfLibraryService, PdfLibraryService>();
+        services.AddSingleton<IImageLibraryService, ImageLibraryService>();
 
         services.AddSingleton<ViewModels.ICampaignDetailViewModelFactory, ViewModels.CampaignDetailViewModelFactory>();
         services.AddSingleton<ViewModels.CampaignListViewModel>();
         services.AddSingleton<ViewModels.ShellViewModel>();
         services.AddSingleton<MainWindow>();
+
+        services.AddSingleton<ViewModels.SecondaryDisplayViewModel>();
+        services.AddSingleton<Views.SecondaryDisplayWindow>();
+        services.AddSingleton<IWindowManager, WindowManager>();
     }
 
     /// <summary>
