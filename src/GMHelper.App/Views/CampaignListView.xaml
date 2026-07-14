@@ -17,6 +17,7 @@
             <Button Content="Kampagne anlegen" Margin="8,0,0,0" Command="{Binding AddCampaignCommand}" />
             <Button Content="Öffnen" Margin="8,0,0,0" Command="{Binding OpenSelectedCampaignCommand}" />
             <Button Content="Ausgewählte löschen" Margin="8,0,0,0" Command="{Binding DeleteCampaignCommand}" />
+            <Button Content="Monster-Datenbank" Margin="24,0,0,0" Command="{Binding OpenMonsterDatabaseCommand}" />
         </StackPanel>
 
         <TextBlock Grid.Row="1"
