@@ -1,0 +1,13 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/GMHelper.App/GMHelper.App.csproj" />
+    <Project Path="src/GMHelper.Core/GMHelper.Core.csproj" />
+    <Project Path="src/GMHelper.Data/GMHelper.Data.csproj" />
+    <Project Path="src/GMHelper.Services/GMHelper.Services.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/GMHelper.Core.Tests/GMHelper.Core.Tests.csproj" />
+    <Project Path="tests/GMHelper.IntegrationTests/GMHelper.IntegrationTests.csproj" />
+    <Project Path="tests/GMHelper.Services.Tests/GMHelper.Services.Tests.csproj" />
+  </Folder>
+</Solution>

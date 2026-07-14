@@ -1,0 +1,15 @@
+## Build outputs
+[Bb]in/
+[Oo]bj/
+*.user
+
+## Rider / VS
+.vs/
+.idea/
+
+## App runtime data - lives inside the project folder but must not be committed
+Data/
+
+## EF Core
+*.db-shm
+*.db-wal
