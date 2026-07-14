@@ -1,8 +1,10 @@
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using GMHelper.App.ViewModels;
 using GMHelper.Core.Entities;
 using Microsoft.Win32;
+using Syncfusion.Windows.PdfViewer;
 
 namespace GMHelper.App.Views;
 
@@ -19,6 +21,10 @@ public partial class PdfLibraryView : UserControl
         PdfList.SelectionChanged += PdfList_SelectionChanged;
         PdfViewer.DocumentLoaded += PdfViewer_DocumentLoaded;
         PdfViewer.CurrentPageChanged += PdfViewer_CurrentPageChanged;
+
+        PdfViewer.InkAnnotationSettings.InkColor = Colors.Black;
+        PdfViewer.InkAnnotationSettings.Thickness = 2;
+        PdfViewer.InkAnnotationSettings.Opacity = 1f;
     }
 
     private async void AddPdfButton_Click(object sender, RoutedEventArgs e)
@@ -47,6 +53,8 @@ public partial class PdfLibraryView : UserControl
             return;
         }
 
+        ResetInkMode();
+
         _loadedPdf = pdf;
         PdfViewer.Load(ViewModel.GetAbsoluteFilePath(pdf));
     }
@@ -70,5 +78,42 @@ public partial class PdfLibraryView : UserControl
         }
 
         await ViewModel.SaveLastViewedPageAsync(PdfViewer.CurrentPage);
+    }
+
+    private void ToggleInkButton_Click(object sender, RoutedEventArgs e)
+    {
+        PdfViewer.AnnotationMode = ToggleInkButton.IsChecked == true
+            ? PdfDocumentView.PdfViewerAnnotationMode.Ink
+            : PdfDocumentView.PdfViewerAnnotationMode.None;
+    }
+
+    private async void SaveButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (ViewModel is null || _loadedPdf is null)
+        {
+            return;
+        }
+
+        var backupSucceeded = await ViewModel.PrepareSaveAsync();
+        if (!backupSucceeded)
+        {
+            return;
+        }
+
+        try
+        {
+            PdfViewer.Save(ViewModel.GetAbsoluteFilePath(_loadedPdf));
+            ViewModel.StatusMessage = "Gespeichert.";
+        }
+        catch (Exception ex)
+        {
+            ViewModel.StatusMessage = $"Fehler beim Speichern: {ex.Message}";
+        }
+    }
+
+    private void ResetInkMode()
+    {
+        ToggleInkButton.IsChecked = false;
+        PdfViewer.AnnotationMode = PdfDocumentView.PdfViewerAnnotationMode.None;
     }
 }

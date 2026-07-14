@@ -74,6 +74,14 @@ public class PdfLibraryService : IPdfLibraryService
     public string GetAbsoluteFilePath(PdfDocument pdfDocument) =>
         Path.Combine(_appPaths.DataRoot, pdfDocument.StoredRelativePath);
 
+    public Task CreateBackupAsync(PdfDocument pdfDocument, CancellationToken cancellationToken = default)
+    {
+        var filePath = GetAbsoluteFilePath(pdfDocument);
+        var backupPath = filePath + ".bak";
+        File.Copy(filePath, backupPath, overwrite: true);
+        return Task.CompletedTask;
+    }
+
     private static string ResolveUniqueDestinationPath(string folder, string fileName)
     {
         var destinationPath = Path.Combine(folder, fileName);

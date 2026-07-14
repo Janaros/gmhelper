@@ -76,6 +76,18 @@ public class PdfLibraryServiceTests : IDisposable
         Assert.Equal(7, pdfs.Single(p => p.Id == pdf.Id).LastViewedPage);
     }
 
+    [Fact]
+    public async Task CreateBackupAsync_CreatesBakFileWithCurrentContent()
+    {
+        var pdf = await _sut.AddPdfToCampaignAsync(_campaignId, _sourcePdfPath);
+
+        await _sut.CreateBackupAsync(pdf);
+
+        var backupPath = _sut.GetAbsoluteFilePath(pdf) + ".bak";
+        Assert.True(File.Exists(backupPath));
+        Assert.Equal(File.ReadAllText(_sut.GetAbsoluteFilePath(pdf)), File.ReadAllText(backupPath));
+    }
+
     public void Dispose()
     {
         _serviceProvider.Dispose();

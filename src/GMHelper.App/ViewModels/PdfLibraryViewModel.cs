@@ -68,6 +68,32 @@ public partial class PdfLibraryViewModel : ObservableObject
 
     public string GetAbsoluteFilePath(PdfDocument pdfDocument) => _pdfLibraryService.GetAbsoluteFilePath(pdfDocument);
 
+    /// <summary>
+    /// Backs up the current file before the viewer control overwrites it in place.
+    /// Returns false (and sets <see cref="StatusMessage"/>) if the backup failed, so the
+    /// caller can skip the actual save rather than risk losing the only copy.
+    /// </summary>
+    public async Task<bool> PrepareSaveAsync()
+    {
+        if (SelectedPdf is null)
+        {
+            return false;
+        }
+
+        try
+        {
+            await _pdfLibraryService.CreateBackupAsync(SelectedPdf);
+            StatusMessage = null;
+            return true;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to create backup before saving PDF {PdfDocumentId}", SelectedPdf.Id);
+            StatusMessage = $"Fehler beim Backup, Speichern abgebrochen: {ex.Message}";
+            return false;
+        }
+    }
+
     private async Task ReloadAsync()
     {
         var pdfs = await _pdfLibraryService.GetPdfsForCampaignAsync(_campaign.Id);

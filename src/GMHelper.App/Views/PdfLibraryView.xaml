@@ -35,6 +35,18 @@
                      DisplayMemberPath="FileName" />
         </Grid>
 
-        <syncfusion:PdfViewerControl x:Name="PdfViewer" Grid.Column="1" />
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="0,0,0,8">
+                <ToggleButton x:Name="ToggleInkButton" Content="✏ Stift" Click="ToggleInkButton_Click" Padding="8,4" />
+                <Button Content="Speichern" Margin="8,0,0,0" Click="SaveButton_Click" Padding="8,4" />
+            </StackPanel>
+
+            <syncfusion:PdfViewerControl x:Name="PdfViewer" Grid.Row="1" />
+        </Grid>
     </Grid>
 </UserControl>
