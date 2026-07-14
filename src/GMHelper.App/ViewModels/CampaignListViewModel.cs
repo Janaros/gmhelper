@@ -7,10 +7,12 @@ using Microsoft.Extensions.Logging;
 
 namespace GMHelper.App.ViewModels;
 
-public partial class MainWindowViewModel : ObservableObject
+public partial class CampaignListViewModel : ObservableObject
 {
     private readonly ICampaignService _campaignService;
-    private readonly ILogger<MainWindowViewModel> _logger;
+    private readonly ILogger<CampaignListViewModel> _logger;
+
+    public event EventHandler<Campaign>? CampaignOpened;
 
     public ObservableCollection<Campaign> Campaigns { get; } = new();
 
@@ -23,7 +25,7 @@ public partial class MainWindowViewModel : ObservableObject
     [ObservableProperty]
     private string? _statusMessage;
 
-    public MainWindowViewModel(ICampaignService campaignService, ILogger<MainWindowViewModel> logger)
+    public CampaignListViewModel(ICampaignService campaignService, ILogger<CampaignListViewModel> logger)
     {
         _campaignService = campaignService;
         _logger = logger;
@@ -76,6 +78,17 @@ public partial class MainWindowViewModel : ObservableObject
             _logger.LogError(ex, "Failed to delete campaign {CampaignId}", SelectedCampaign?.Id);
             StatusMessage = $"Fehler beim Löschen: {ex.Message}";
         }
+    }
+
+    [RelayCommand]
+    private void OpenSelectedCampaign()
+    {
+        if (SelectedCampaign is null)
+        {
+            return;
+        }
+
+        CampaignOpened?.Invoke(this, SelectedCampaign);
     }
 
     private async Task ReloadCampaignsAsync()

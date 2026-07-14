@@ -5,9 +5,9 @@ namespace GMHelper.App;
 
 public partial class MainWindow : Window
 {
-    private readonly MainWindowViewModel _viewModel;
+    private readonly ShellViewModel _viewModel;
 
-    public MainWindow(MainWindowViewModel viewModel)
+    public MainWindow(ShellViewModel viewModel)
     {
         InitializeComponent();
 
