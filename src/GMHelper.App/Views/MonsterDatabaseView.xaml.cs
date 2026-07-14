@@ -1,3 +1,4 @@
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
@@ -34,6 +35,64 @@ public partial class MonsterDatabaseView : UserControl
         {
             await ViewModel.AssignImageAsync(dialog.FileName);
             await RefreshPortraitAsync();
+        }
+    }
+
+    private async void ImportButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (ViewModel is null)
+        {
+            return;
+        }
+
+        var dialog = new OpenFileDialog
+        {
+            Filter = "Monster-Import (*.json;*.csv)|*.json;*.csv",
+            Title = "Monster importieren",
+        };
+
+        if (dialog.ShowDialog() != true)
+        {
+            return;
+        }
+
+        var records = await ViewModel.ParseImportFileAsync(dialog.FileName);
+        if (records.Count == 0)
+        {
+            MessageBox.Show("Die Datei enthält keine importierbaren Monster.", "Import", MessageBoxButton.OK, MessageBoxImage.Information);
+            return;
+        }
+
+        var previewViewModel = new ImportPreviewViewModel(records);
+        var previewWindow = new ImportPreviewWindow(previewViewModel)
+        {
+            Owner = Window.GetWindow(this),
+        };
+
+        if (previewWindow.ShowDialog() == true)
+        {
+            var baseDirectory = Path.GetDirectoryName(dialog.FileName) ?? string.Empty;
+            await ViewModel.CommitImportAsync(records, baseDirectory, previewViewModel.ConflictStrategy);
+        }
+    }
+
+    private async void ExportButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (ViewModel is null)
+        {
+            return;
+        }
+
+        var dialog = new SaveFileDialog
+        {
+            Filter = "JSON-Datei (*.json)|*.json|CSV-Datei (*.csv)|*.csv",
+            Title = "Monster exportieren",
+            FileName = "Monster.json",
+        };
+
+        if (dialog.ShowDialog() == true)
+        {
+            await ViewModel.ExportAsync(dialog.FileName);
         }
     }
 
