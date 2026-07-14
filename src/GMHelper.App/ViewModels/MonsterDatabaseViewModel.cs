@@ -1,9 +1,11 @@
 using System.Collections.ObjectModel;
+using System.IO;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using GMHelper.Core.Abstractions;
 using GMHelper.Core.Entities;
 using GMHelper.Core.Enums;
+using GMHelper.Core.Models;
 using Microsoft.Extensions.Logging;
 
 namespace GMHelper.App.ViewModels;
@@ -17,6 +19,8 @@ public partial class MonsterDatabaseViewModel : ObservableObject
     private readonly IMonsterService _monsterService;
     private readonly IStatFieldService _statFieldService;
     private readonly IImageLibraryService _imageLibraryService;
+    private readonly IMonsterImportService _monsterImportService;
+    private readonly IMonsterExportService _monsterExportService;
     private readonly ILogger<MonsterDatabaseViewModel> _logger;
 
     public ObservableCollection<Monster> Monsters { get; } = new();
@@ -40,11 +44,15 @@ public partial class MonsterDatabaseViewModel : ObservableObject
         IMonsterService monsterService,
         IStatFieldService statFieldService,
         IImageLibraryService imageLibraryService,
+        IMonsterImportService monsterImportService,
+        IMonsterExportService monsterExportService,
         ILogger<MonsterDatabaseViewModel> logger)
     {
         _monsterService = monsterService;
         _statFieldService = statFieldService;
         _imageLibraryService = imageLibraryService;
+        _monsterImportService = monsterImportService;
+        _monsterExportService = monsterExportService;
         _logger = logger;
     }
 
@@ -142,6 +150,50 @@ public partial class MonsterDatabaseViewModel : ObservableObject
         {
             _logger.LogError(ex, "Failed to assign image to monster {MonsterId}", selectedId);
             StatusMessage = $"Fehler beim Bild zuweisen: {ex.Message}";
+        }
+    }
+
+    public async Task<IReadOnlyList<MonsterImportRecord>> ParseImportFileAsync(string filePath)
+    {
+        return Path.GetExtension(filePath).Equals(".csv", StringComparison.OrdinalIgnoreCase)
+            ? await _monsterImportService.ParseCsvAsync(filePath)
+            : await _monsterImportService.ParseJsonAsync(filePath);
+    }
+
+    public async Task CommitImportAsync(IReadOnlyList<MonsterImportRecord> records, string baseDirectory, MonsterImportConflictStrategy conflictStrategy)
+    {
+        try
+        {
+            var result = await _monsterImportService.CommitImportAsync(records, baseDirectory, conflictStrategy);
+            StatusMessage = $"Import abgeschlossen: {result.CreatedCount} neu, {result.UpdatedCount} aktualisiert, {result.SkippedCount} übersprungen.";
+            await ReloadMonstersAsync();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to commit monster import");
+            StatusMessage = $"Fehler beim Import: {ex.Message}";
+        }
+    }
+
+    public async Task ExportAsync(string destinationFilePath)
+    {
+        try
+        {
+            if (Path.GetExtension(destinationFilePath).Equals(".csv", StringComparison.OrdinalIgnoreCase))
+            {
+                await _monsterExportService.ExportToCsvAsync(destinationFilePath);
+            }
+            else
+            {
+                await _monsterExportService.ExportToJsonAsync(destinationFilePath);
+            }
+
+            StatusMessage = $"Exportiert nach {destinationFilePath}.";
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to export monsters to {DestinationFilePath}", destinationFilePath);
+            StatusMessage = $"Fehler beim Export: {ex.Message}";
         }
     }
 
