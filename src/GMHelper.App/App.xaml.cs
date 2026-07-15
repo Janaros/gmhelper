@@ -95,11 +95,19 @@ public partial class App : Application
     /// <summary>
     /// Reads a Syncfusion Community License key from a local, gitignored file at the repo root
     /// (syncfusion-license.local.txt) if present. Without it, Syncfusion controls run in an
-    /// unlicensed trial state (dialog/watermark) instead of the app crashing.
+    /// unlicensed trial state (dialog/watermark) instead of the app crashing. Installed
+    /// (published) copies never have a repo root, so they always run unlicensed — the license
+    /// is tied to the developer's own account and must not be redistributed.
     /// </summary>
     private static void RegisterSyncfusionLicense()
     {
-        var licenseFilePath = Path.Combine(ResolveRepoRoot(), "syncfusion-license.local.txt");
+        var repoRoot = TryFindRepoRoot();
+        if (repoRoot is null)
+        {
+            return;
+        }
+
+        var licenseFilePath = Path.Combine(repoRoot, "syncfusion-license.local.txt");
         if (!File.Exists(licenseFilePath))
         {
             return;
@@ -115,21 +123,37 @@ public partial class App : Application
     /// <summary>
     /// Dev-time layout: walk up from the build output folder to the repo root (marked by the
     /// solution file) so runtime data lives at &lt;repo&gt;/Data regardless of build configuration.
-    /// A future installed/published build can swap this for a fixed relative path instead.
+    /// Installed copies (e.g. ClickOnce) have no solution file to anchor to, and ClickOnce
+    /// re-deploys each version into a fresh per-version cache folder, so anchoring to
+    /// AppContext.BaseDirectory there would silently orphan the user's data on every update.
+    /// Those copies get a stable per-user folder instead.
     /// </summary>
-    private static string ResolveDataRoot() => Path.Combine(ResolveRepoRoot(), "Data");
+    private static string ResolveDataRoot()
+    {
+        var repoRoot = TryFindRepoRoot();
+        if (repoRoot is not null)
+        {
+            return Path.Combine(repoRoot, "Data");
+        }
 
-    private static string ResolveRepoRoot()
+        var localAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+        return Path.Combine(localAppData, "GMHelper");
+    }
+
+    private static string? TryFindRepoRoot()
     {
         var directory = new DirectoryInfo(AppContext.BaseDirectory);
-        while (directory is not null &&
-               directory.GetFiles("GMHelper.slnx").Length == 0 &&
-               directory.GetFiles("GMHelper.sln").Length == 0)
+        while (directory is not null)
         {
+            if (directory.GetFiles("GMHelper.slnx").Length > 0 || directory.GetFiles("GMHelper.sln").Length > 0)
+            {
+                return directory.FullName;
+            }
+
             directory = directory.Parent;
         }
 
-        return directory?.FullName ?? AppContext.BaseDirectory;
+        return null;
     }
 
     protected override void OnExit(ExitEventArgs e)
