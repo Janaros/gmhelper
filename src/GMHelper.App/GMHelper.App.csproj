@@ -38,6 +38,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
     <UseWindowsForms>true</UseWindowsForms>
+    <!-- Bump this with every change that ships (shown in the About dialog). -->
+    <Version>1.0.0</Version>
   </PropertyGroup>
 
 </Project>

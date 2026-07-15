@@ -39,4 +39,9 @@ public partial class MainWindow : Window
                 break;
         }
     }
+
+    private void InfoButton_Click(object sender, RoutedEventArgs e)
+    {
+        new Views.AboutWindow { Owner = this }.ShowDialog();
+    }
 }

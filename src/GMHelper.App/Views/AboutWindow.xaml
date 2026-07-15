@@ -1,0 +1,24 @@
+<Window x:Class="GMHelper.App.Views.AboutWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        mc:Ignorable="d"
+        Title="Über GMHelper"
+        Width="320" Height="220"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize"
+        ShowInTaskbar="False">
+    <StackPanel Margin="20" HorizontalAlignment="Center" VerticalAlignment="Center">
+        <TextBlock Text="GMHelper" FontSize="22" FontWeight="Bold" HorizontalAlignment="Center" />
+        <TextBlock x:Name="VersionText" Margin="0,4,0,16" HorizontalAlignment="Center" Foreground="Gray" />
+
+        <TextBlock Text="Programmiert von Markus Klatte-Schür" HorizontalAlignment="Center" Margin="0,0,0,8" />
+
+        <TextBlock HorizontalAlignment="Center" Margin="0,0,0,16">
+            <Hyperlink Click="Hyperlink_Click">https://janaros.de</Hyperlink>
+        </TextBlock>
+
+        <Button Content="Schließen" Width="90" HorizontalAlignment="Center" Click="CloseButton_Click" />
+    </StackPanel>
+</Window>

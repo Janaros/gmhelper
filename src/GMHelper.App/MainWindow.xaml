@@ -53,19 +53,33 @@
         </Grid.ColumnDefinitions>
 
         <Border Grid.Column="0" Background="#FFF5F5F5" BorderBrush="#FFDDDDDD" BorderThickness="0,0,1,0">
-            <StackPanel Margin="0,16,0,0">
-                <TextBlock Text="GMHelper" FontSize="18" FontWeight="Bold" Margin="16,0,0,20" />
+            <DockPanel>
+                <Button DockPanel.Dock="Bottom"
+                        Content="ⓘ Info"
+                        HorizontalAlignment="Right"
+                        Margin="0,0,12,10"
+                        Padding="4,2"
+                        Background="Transparent"
+                        BorderThickness="0"
+                        Foreground="Gray"
+                        FontSize="11"
+                        Cursor="Hand"
+                        Click="InfoButton_Click" />
 
-                <ToggleButton Content="📁 Kampagnen"
-                              Style="{StaticResource NavRailItemStyle}"
-                              IsChecked="{Binding IsCampaignsSection, Mode=OneWay}"
-                              Command="{Binding NavigateToCampaignsCommand}" />
+                <StackPanel Margin="0,16,0,0">
+                    <TextBlock Text="GMHelper" FontSize="18" FontWeight="Bold" Margin="16,0,0,20" />
 
-                <ToggleButton Content="🐉 Monster-Datenbank"
-                              Style="{StaticResource NavRailItemStyle}"
-                              IsChecked="{Binding IsMonsterDatabaseSection, Mode=OneWay}"
-                              Command="{Binding NavigateToMonsterDatabaseCommand}" />
-            </StackPanel>
+                    <ToggleButton Content="📁 Kampagnen"
+                                  Style="{StaticResource NavRailItemStyle}"
+                                  IsChecked="{Binding IsCampaignsSection, Mode=OneWay}"
+                                  Command="{Binding NavigateToCampaignsCommand}" />
+
+                    <ToggleButton Content="🐉 Monster-Datenbank"
+                                  Style="{StaticResource NavRailItemStyle}"
+                                  IsChecked="{Binding IsMonsterDatabaseSection, Mode=OneWay}"
+                                  Command="{Binding NavigateToMonsterDatabaseCommand}" />
+                </StackPanel>
+            </DockPanel>
         </Border>
 
         <ContentControl Grid.Column="1" Content="{Binding CurrentViewModel}" />
