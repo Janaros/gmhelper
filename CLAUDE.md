@@ -39,6 +39,8 @@ Referenzrichtung: `Core` ← `Data` ← `Services` ← `App` (Core hat keine Abh
 
 Alle Nutzdaten (SQLite-DB, kopierte PDFs/Bilder, Logs) liegen unter `<Projektordner>\Data\` — **bewusst im Projektordner, nicht unter dem Windows-Benutzerprofil `%LocalAppData%`**. Der Ordner ist per `.gitignore` vom Repo ausgeschlossen. Der Pfad wird zur Laufzeit über `IAppPaths` (Interface in `Core.Abstractions`, Implementierung `AppPaths` in `Services`) aufgelöst; `App.xaml.cs` bestimmt als Composition Root beim Start den Datenordner relativ zur Solution-Datei und registriert eine konkrete `IAppPaths`-Instanz in der DI-Container. Tests konstruieren `AppPaths` stattdessen mit einem temporären Verzeichnis — deshalb darf `AppPaths` nie statisch/global zugreifen, sondern nimmt den Root-Pfad im Konstruktor entgegen.
 
+Diese Regel gilt für den **Dev-Workflow** (Repo mit `GMHelper.slnx`). Bei einer **installierten** Kopie (z.B. per ClickOnce) existiert keine Solution-Datei zum Verankern, und ClickOnce entpackt jede Version in einen neuen, versionsspezifischen Cache-Ordner — ein Fallback auf `AppContext.BaseDirectory` würde die Nutzdaten bei jedem Update verwaisen lassen. Findet `App.xaml.cs` beim Hochlaufen kein `GMHelper.slnx`/`.sln` in einem Vorgänger-Verzeichnis der exe, weicht es stattdessen auf einen stabilen, versionsunabhängigen Ordner unter `%LocalAppData%\GMHelper` aus (siehe `ResolveDataRoot()`/`TryFindRepoRoot()` in `App.xaml.cs`).
+
 ## Git-Workflow
 
 - `main` ist der geschützte Hauptbranch. Jede inhaltliche Änderung läuft über einen eigenen **Feature-Branch** (`feature/<kurzname>`), nie direkt auf `main`.
