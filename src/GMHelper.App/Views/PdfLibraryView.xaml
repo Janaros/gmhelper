@@ -49,10 +49,31 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
+        <Style x:Key="ColorSwatchStyle" TargetType="RadioButton">
+            <Setter Property="Width" Value="24" />
+            <Setter Property="Height" Value="24" />
+            <Setter Property="Margin" Value="2,0" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="RadioButton">
+                        <Border Background="{TemplateBinding Background}" BorderBrush="#FF999999" BorderThickness="1" CornerRadius="2">
+                            <Border x:Name="Sel" BorderBrush="#FF3F87DA" BorderThickness="2" CornerRadius="2" Visibility="Collapsed" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="Sel" Property="Visibility" Value="Visible" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </UserControl.Resources>
 
     <Grid Margin="8">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
@@ -82,6 +103,27 @@
             <Button Content="Speichern" Margin="8,0,0,0" Click="SaveButton_Click" Padding="8,4" />
         </StackPanel>
 
-        <syncfusion:PdfViewerControl x:Name="PdfViewer" Grid.Row="3" />
+        <StackPanel Grid.Row="3" Orientation="Horizontal" Margin="0,0,0,4"
+                    Visibility="{Binding IsChecked, ElementName=ToggleInkButton, Converter={x:Static local:BoolToVisibilityConverter.Instance}}">
+            <TextBlock Text="Farbe:" VerticalAlignment="Center" Margin="0,0,4,0" />
+            <RadioButton x:Name="ColorRed" GroupName="InkColor" Style="{StaticResource ColorSwatchStyle}" Background="Red" Click="InkColor_Click" />
+            <RadioButton x:Name="ColorGreen" GroupName="InkColor" Style="{StaticResource ColorSwatchStyle}" Background="Green" Click="InkColor_Click" />
+            <RadioButton x:Name="ColorBlack" GroupName="InkColor" Style="{StaticResource ColorSwatchStyle}" Background="Black" Click="InkColor_Click" IsChecked="True" />
+            <RadioButton x:Name="ColorYellow" GroupName="InkColor" Style="{StaticResource ColorSwatchStyle}" Background="Gold" Click="InkColor_Click" />
+
+            <TextBlock Text="Dicke:" VerticalAlignment="Center" Margin="16,0,4,0" />
+            <RadioButton GroupName="InkThickness" Content="Dünn" Tag="1" Click="InkThickness_Click" VerticalContentAlignment="Center" Margin="0,0,8,0" />
+            <RadioButton GroupName="InkThickness" Content="Normal" Tag="3" Click="InkThickness_Click" IsChecked="True" VerticalContentAlignment="Center" Margin="0,0,8,0" />
+            <RadioButton GroupName="InkThickness" Content="Dick" Tag="6" Click="InkThickness_Click" VerticalContentAlignment="Center" />
+
+            <CheckBox x:Name="TransparentCheckBox"
+                      Content="Transparent (markieren)"
+                      VerticalAlignment="Center"
+                      Margin="16,0,0,0"
+                      Checked="TransparentCheckBox_Changed"
+                      Unchecked="TransparentCheckBox_Changed" />
+        </StackPanel>
+
+        <syncfusion:PdfViewerControl x:Name="PdfViewer" Grid.Row="4" />
     </Grid>
 </UserControl>
