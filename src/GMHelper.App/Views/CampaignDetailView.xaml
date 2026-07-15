@@ -5,19 +5,29 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:views="clr-namespace:GMHelper.App.Views"
              xmlns:tools="clr-namespace:Syncfusion.Windows.Tools.Controls;assembly=Syncfusion.Tools.WPF"
+             xmlns:local="clr-namespace:GMHelper.App"
              mc:Ignorable="d">
     <Grid Margin="12">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="0,0,0,12">
+        <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="0,0,0,4">
             <Button Content="&lt; Zurück" Command="{Binding BackCommand}" />
             <TextBlock Text="{Binding Campaign.Name}" FontSize="18" FontWeight="Bold" Margin="12,0,0,0" VerticalAlignment="Center" />
+            <Button Content="Backup exportieren" Margin="24,0,0,0" Click="ExportBackupButton_Click" />
         </StackPanel>
 
-        <tools:TabControlExt Grid.Row="1">
+        <TextBlock Grid.Row="1"
+                   Text="{Binding StatusMessage}"
+                   Foreground="Gray"
+                   TextWrapping="Wrap"
+                   Margin="0,0,0,8"
+                   Visibility="{Binding StatusMessage, Converter={x:Static local:NullToVisibilityConverter.Instance}}" />
+
+        <tools:TabControlExt Grid.Row="2">
             <tools:TabItemExt Header="PDFs">
                 <views:PdfLibraryView DataContext="{Binding PdfLibrary}" />
             </tools:TabItemExt>
