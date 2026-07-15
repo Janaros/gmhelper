@@ -1,0 +1,105 @@
+<UserControl x:Class="GMHelper.App.Views.CombatTrackerView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:GMHelper.App"
+             mc:Ignorable="d">
+    <UserControl.Resources>
+        <SolidColorBrush x:Key="CurrentTurnBrush" Color="#FFEFD98A" />
+    </UserControl.Resources>
+
+    <Grid Margin="8">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,8">
+            <Button Content="Kampf vorbereiten"
+                    Command="{Binding PrepareEncounterCommand}"
+                    Visibility="{Binding HasActiveEncounter, Converter={x:Static local:InverseBoolToVisibilityConverter.Instance}}" />
+
+            <Button Content="Kampf beginnen"
+                    Command="{Binding StartEncounterCommand}"
+                    Visibility="{Binding IsPreparing, Converter={x:Static local:BoolToVisibilityConverter.Instance}}" />
+
+            <TextBlock Text="{Binding CurrentRound, StringFormat='Runde {0}'}"
+                       VerticalAlignment="Center" FontWeight="Bold" Margin="0,0,12,0"
+                       Visibility="{Binding HasStarted, Converter={x:Static local:BoolToVisibilityConverter.Instance}}" />
+            <Button Content="Nächster"
+                    Command="{Binding NextTurnCommand}"
+                    Visibility="{Binding HasStarted, Converter={x:Static local:BoolToVisibilityConverter.Instance}}" />
+
+            <Button Content="Kampf beenden"
+                    Command="{Binding EndEncounterCommand}"
+                    Margin="16,0,0,0"
+                    Visibility="{Binding HasActiveEncounter, Converter={x:Static local:BoolToVisibilityConverter.Instance}}" />
+        </StackPanel>
+
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,8"
+                    Visibility="{Binding HasActiveEncounter, Converter={x:Static local:BoolToVisibilityConverter.Instance}}">
+            <ComboBox Width="220" ItemsSource="{Binding AvailableMonsters}" SelectedItem="{Binding SelectedMonsterToAdd}" DisplayMemberPath="Name" />
+            <Button Content="Monster hinzufügen" Margin="8,0,0,0" Command="{Binding AddMonsterCommand}" />
+        </StackPanel>
+
+        <TextBlock Grid.Row="2"
+                   Text="{Binding StatusMessage}"
+                   Foreground="Red"
+                   TextWrapping="Wrap"
+                   Margin="0,0,0,8"
+                   Visibility="{Binding StatusMessage, Converter={x:Static local:NullToVisibilityConverter.Instance}}" />
+
+        <ScrollViewer Grid.Row="3" VerticalScrollBarVisibility="Auto">
+            <ItemsControl ItemsSource="{Binding Participants}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Padding="6" Margin="0,0,0,4" CornerRadius="4">
+                            <Border.Style>
+                                <Style TargetType="Border">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsCurrentTurn}" Value="True">
+                                            <Setter Property="Background" Value="{StaticResource CurrentTurnBrush}" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Border.Style>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="140" />
+                                    <ColumnDefinition Width="60" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="60" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="60" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <TextBox Grid.Column="0" Text="{Binding DisplayName}" IsReadOnly="{Binding IsMonster, Converter={x:Static local:InverseBoolConverter.Instance}}" Margin="0,0,4,0" />
+
+                                <TextBox Grid.Column="1" Text="{Binding InitiativeText}" ToolTip="Initiative" Margin="0,0,2,0" />
+                                <Button Grid.Column="2" Content="🎲" Width="28" Margin="0,0,8,0" Click="RollInitiativeButton_Click" Tag="{Binding}" ToolTip="W20 würfeln" />
+
+                                <Button Grid.Column="3" Content="−" Width="24" Click="DecrementHpButton_Click" Tag="{Binding}" />
+                                <TextBox Grid.Column="4" Text="{Binding TrackedValueText}" ToolTip="Aktuelle HP" />
+                                <Button Grid.Column="5" Content="+" Width="24" Margin="2,0,0,0" Click="IncrementHpButton_Click" Tag="{Binding}" />
+                                <TextBlock Grid.Column="6" Margin="4,0,8,0" VerticalAlignment="Center"
+                                           Text="{Binding MaxTrackedValue, StringFormat='/ {0}'}"
+                                           Visibility="{Binding MaxTrackedValue, Converter={x:Static local:NullToVisibilityConverter.Instance}}" />
+
+                                <TextBox Grid.Column="8" Text="{Binding ConditionsText}" ToolTip="Zustände (frei, z.B. vergiftet)" Margin="0,0,8,0" />
+
+                                <Button Grid.Column="9" Content="✕" Width="24" Click="RemoveParticipantButton_Click" Tag="{Binding}" />
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

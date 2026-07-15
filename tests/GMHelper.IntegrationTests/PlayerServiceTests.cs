@@ -63,7 +63,7 @@ public class PlayerServiceTests : IDisposable
     }
 
     [Fact]
-    public async Task DeletePlayerAsync_SoftDeletes_HiddenFromActiveRoster()
+    public async Task DeletePlayerAsync_RemovesRow()
     {
         var player = await _sut.CreatePlayerAsync(_campaignId, "Grog");
 
@@ -71,6 +71,18 @@ public class PlayerServiceTests : IDisposable
 
         var players = await _sut.GetPlayersForCampaignAsync(_campaignId);
         Assert.DoesNotContain(players, p => p.Id == player.Id);
+    }
+
+    [Fact]
+    public async Task SetActiveAsync_TogglesFlag_ButKeepsPlayerInRoster()
+    {
+        var player = await _sut.CreatePlayerAsync(_campaignId, "Grog");
+
+        await _sut.SetActiveAsync(player.Id, false);
+
+        var players = await _sut.GetPlayersForCampaignAsync(_campaignId);
+        var found = players.Single(p => p.Id == player.Id);
+        Assert.False(found.IsActive);
     }
 
     public void Dispose()

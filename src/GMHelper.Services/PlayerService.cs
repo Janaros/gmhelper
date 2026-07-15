@@ -35,7 +35,7 @@ public class PlayerService : IPlayerService
         await using var db = await _dbContextFactory.CreateDbContextAsync(cancellationToken);
         return await db.Players
             .AsNoTracking()
-            .Where(p => p.CampaignId == campaignId && p.IsActive)
+            .Where(p => p.CampaignId == campaignId)
             .OrderBy(p => p.CharacterName)
             .ToListAsync(cancellationToken);
     }
@@ -58,6 +58,20 @@ public class PlayerService : IPlayerService
         await db.SaveChangesAsync(cancellationToken);
     }
 
+    public async Task SetActiveAsync(int playerId, bool isActive, CancellationToken cancellationToken = default)
+    {
+        await using var db = await _dbContextFactory.CreateDbContextAsync(cancellationToken);
+
+        var player = await db.Players.FindAsync([playerId], cancellationToken);
+        if (player is null)
+        {
+            return;
+        }
+
+        player.IsActive = isActive;
+        await db.SaveChangesAsync(cancellationToken);
+    }
+
     public async Task DeletePlayerAsync(int playerId, CancellationToken cancellationToken = default)
     {
         await using var db = await _dbContextFactory.CreateDbContextAsync(cancellationToken);
@@ -68,9 +82,7 @@ public class PlayerService : IPlayerService
             return;
         }
 
-        // Soft delete: keeps the row (and its Id) around for any historical CombatParticipant
-        // references added in a later phase, while hiding it from the active roster.
-        player.IsActive = false;
+        db.Players.Remove(player);
         await db.SaveChangesAsync(cancellationToken);
     }
 }
