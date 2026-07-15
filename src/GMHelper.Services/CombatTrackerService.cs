@@ -1,0 +1,230 @@
+using GMHelper.Core.Abstractions;
+using GMHelper.Core.Entities;
+using GMHelper.Core.Enums;
+using GMHelper.Data;
+using Microsoft.EntityFrameworkCore;
+
+namespace GMHelper.Services;
+
+public class CombatTrackerService : ICombatTrackerService
+{
+    private readonly IDbContextFactory<AppDbContext> _dbContextFactory;
+
+    public CombatTrackerService(IDbContextFactory<AppDbContext> dbContextFactory)
+    {
+        _dbContextFactory = dbContextFactory;
+    }
+
+    public async Task<CombatEncounter?> GetActiveEncounterAsync(int campaignId, CancellationToken cancellationToken = default)
+    {
+        await using var db = await _dbContextFactory.CreateDbContextAsync(cancellationToken);
+        return await db.CombatEncounters
+            .AsNoTracking()
+            .FirstOrDefaultAsync(e => e.CampaignId == campaignId && e.IsActive, cancellationToken);
+    }
+
+    public async Task<CombatEncounter> PrepareEncounterAsync(int campaignId, CancellationToken cancellationToken = default)
+    {
+        await using var db = await _dbContextFactory.CreateDbContextAsync(cancellationToken);
+
+        var encounter = new CombatEncounter
+        {
+            CampaignId = campaignId,
+            CurrentRound = 0,
+            IsActive = true,
+            CreatedAt = DateTime.UtcNow,
+        };
+        db.CombatEncounters.Add(encounter);
+        await db.SaveChangesAsync(cancellationToken);
+
+        var activePlayers = await db.Players
+            .Where(p => p.CampaignId == campaignId && p.IsActive)
+            .OrderBy(p => p.CharacterName)
+            .ToListAsync(cancellationToken);
+
+        var sortOrder = 0;
+        foreach (var player in activePlayers)
+        {
+            var hp = await TryGetHpAsync(db, StatFieldOwnerType.Player, player.Id, cancellationToken);
+
+            db.CombatParticipants.Add(new CombatParticipant
+            {
+                CombatEncounterId = encounter.Id,
+                DisplayName = player.CharacterName,
+                SourceType = CombatParticipantSourceType.PlayerRef,
+                PlayerId = player.Id,
+                Initiative = player.Initiative,
+                CurrentTrackedValue = hp,
+                MaxTrackedValue = hp,
+                SortOrder = sortOrder++,
+            });
+        }
+
+        await db.SaveChangesAsync(cancellationToken);
+        return encounter;
+    }
+
+    public async Task<IReadOnlyList<CombatParticipant>> GetParticipantsAsync(int combatEncounterId, CancellationToken cancellationToken = default)
+    {
+        await using var db = await _dbContextFactory.CreateDbContextAsync(cancellationToken);
+        return await db.CombatParticipants
+            .AsNoTracking()
+            .Where(p => p.CombatEncounterId == combatEncounterId && p.IsActive)
+            .OrderByDescending(p => p.Initiative)
+            .ThenBy(p => p.SortOrder)
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<CombatParticipant> AddMonsterParticipantAsync(int combatEncounterId, int monsterId, CancellationToken cancellationToken = default)
+    {
+        await using var db = await _dbContextFactory.CreateDbContextAsync(cancellationToken);
+
+        var monster = await db.Monsters.FindAsync([monsterId], cancellationToken)
+            ?? throw new InvalidOperationException($"Monster {monsterId} not found.");
+
+        var existingOfSameMonster = await db.CombatParticipants
+            .CountAsync(p => p.CombatEncounterId == combatEncounterId && p.MonsterId == monsterId, cancellationToken);
+
+        var maxSortOrder = await db.CombatParticipants
+            .Where(p => p.CombatEncounterId == combatEncounterId)
+            .Select(p => (int?)p.SortOrder)
+            .MaxAsync(cancellationToken) ?? -1;
+
+        var hp = await TryGetHpAsync(db, StatFieldOwnerType.Monster, monsterId, cancellationToken);
+
+        var participant = new CombatParticipant
+        {
+            CombatEncounterId = combatEncounterId,
+            DisplayName = $"{monster.Name} {existingOfSameMonster + 1}",
+            SourceType = CombatParticipantSourceType.MonsterInstance,
+            MonsterId = monsterId,
+            CurrentTrackedValue = hp,
+            MaxTrackedValue = hp,
+            SortOrder = maxSortOrder + 1,
+        };
+
+        db.CombatParticipants.Add(participant);
+        await db.SaveChangesAsync(cancellationToken);
+
+        return participant;
+    }
+
+    public async Task UpdateParticipantAsync(
+        int participantId,
+        string displayName,
+        int? initiative,
+        int? currentTrackedValue,
+        string? conditionsText,
+        CancellationToken cancellationToken = default)
+    {
+        await using var db = await _dbContextFactory.CreateDbContextAsync(cancellationToken);
+
+        var participant = await db.CombatParticipants.FindAsync([participantId], cancellationToken);
+        if (participant is null)
+        {
+            return;
+        }
+
+        participant.DisplayName = displayName;
+        participant.Initiative = initiative;
+        participant.CurrentTrackedValue = currentTrackedValue;
+        participant.ConditionsText = conditionsText;
+
+        await db.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task RemoveParticipantAsync(int participantId, CancellationToken cancellationToken = default)
+    {
+        await using var db = await _dbContextFactory.CreateDbContextAsync(cancellationToken);
+
+        var participant = await db.CombatParticipants.FindAsync([participantId], cancellationToken);
+        if (participant is null)
+        {
+            return;
+        }
+
+        participant.IsActive = false;
+        await db.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task StartEncounterAsync(int combatEncounterId, CancellationToken cancellationToken = default)
+    {
+        await using var db = await _dbContextFactory.CreateDbContextAsync(cancellationToken);
+
+        var encounter = await db.CombatEncounters.FindAsync([combatEncounterId], cancellationToken);
+        if (encounter is null)
+        {
+            return;
+        }
+
+        var firstParticipant = await db.CombatParticipants
+            .Where(p => p.CombatEncounterId == combatEncounterId && p.IsActive)
+            .OrderByDescending(p => p.Initiative)
+            .ThenBy(p => p.SortOrder)
+            .FirstOrDefaultAsync(cancellationToken);
+
+        encounter.CurrentRound = 1;
+        encounter.CurrentTurnParticipantId = firstParticipant?.Id;
+
+        await db.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task AdvanceTurnAsync(int combatEncounterId, CancellationToken cancellationToken = default)
+    {
+        await using var db = await _dbContextFactory.CreateDbContextAsync(cancellationToken);
+
+        var encounter = await db.CombatEncounters.FindAsync([combatEncounterId], cancellationToken);
+        if (encounter is null)
+        {
+            return;
+        }
+
+        var orderedParticipants = await db.CombatParticipants
+            .Where(p => p.CombatEncounterId == combatEncounterId && p.IsActive)
+            .OrderByDescending(p => p.Initiative)
+            .ThenBy(p => p.SortOrder)
+            .ToListAsync(cancellationToken);
+
+        if (orderedParticipants.Count == 0)
+        {
+            return;
+        }
+
+        var currentIndex = orderedParticipants.FindIndex(p => p.Id == encounter.CurrentTurnParticipantId);
+        var nextIndex = currentIndex + 1;
+
+        if (nextIndex >= orderedParticipants.Count)
+        {
+            nextIndex = 0;
+            encounter.CurrentRound++;
+        }
+
+        encounter.CurrentTurnParticipantId = orderedParticipants[nextIndex].Id;
+        await db.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task EndEncounterAsync(int combatEncounterId, CancellationToken cancellationToken = default)
+    {
+        await using var db = await _dbContextFactory.CreateDbContextAsync(cancellationToken);
+
+        var encounter = await db.CombatEncounters.FindAsync([combatEncounterId], cancellationToken);
+        if (encounter is null)
+        {
+            return;
+        }
+
+        encounter.IsActive = false;
+        await db.SaveChangesAsync(cancellationToken);
+    }
+
+    /// <summary>Looks up a stat field named exactly "HP" (case-insensitive) and parses it as an
+    /// integer, so a participant's current/max tracked value can be pre-filled on add.</summary>
+    private static async Task<int?> TryGetHpAsync(AppDbContext db, StatFieldOwnerType ownerType, int ownerId, CancellationToken cancellationToken)
+    {
+        var hpStatField = await db.StatFields
+            .Where(s => s.OwnerType == ownerType && s.OwnerId == ownerId && s.Name == "HP")
+            .FirstOrDefaultAsync(cancellationToken);
+
+        return hpStatField is not null && int.TryParse(hpStatField.Value, out var parsedHp) ? parsedHp : null;
+    }
+}

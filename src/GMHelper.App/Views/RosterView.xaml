@@ -28,10 +28,30 @@
                        Margin="0,0,0,8"
                        Visibility="{Binding StatusMessage, Converter={x:Static local:NullToVisibilityConverter.Instance}}" />
 
-            <ListBox Grid.Row="2"
+            <ListBox x:Name="PlayerList"
+                     Grid.Row="2"
                      ItemsSource="{Binding Players}"
-                     SelectedItem="{Binding SelectedPlayer}"
-                     DisplayMemberPath="CharacterName" />
+                     SelectedItem="{Binding SelectedPlayer}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <CheckBox IsChecked="{Binding IsActive}" Click="ActiveCheckBox_Click" VerticalAlignment="Center" Margin="0,0,4,0" />
+                            <TextBlock Text="{Binding CharacterName}" VerticalAlignment="Center">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsActive}" Value="False">
+                                                <Setter Property="Foreground" Value="Gray" />
+                                                <Setter Property="FontStyle" Value="Italic" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
         </Grid>
 
         <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto">

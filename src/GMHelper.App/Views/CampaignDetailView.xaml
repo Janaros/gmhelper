@@ -27,7 +27,7 @@
                 <views:RosterView DataContext="{Binding Roster}" />
             </TabItem>
             <TabItem Header="Kampf">
-                <TextBlock Text="Kommt in Phase 8 (Kampf-Tracker)." Margin="12" Foreground="Gray" />
+                <views:CombatTrackerView DataContext="{Binding CombatTracker}" />
             </TabItem>
             <TabItem Header="Notizen">
                 <TextBlock Text="Kommt in Phase 9 (Markdown-Session-Notizen)." Margin="12" Foreground="Gray" />

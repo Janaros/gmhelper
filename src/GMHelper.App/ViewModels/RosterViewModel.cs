@@ -114,6 +114,19 @@ public partial class RosterViewModel : ObservableObject
         }
     }
 
+    public async Task SetPlayerActiveAsync(Player player, bool isActive)
+    {
+        try
+        {
+            await _playerService.SetActiveAsync(player.Id, isActive);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to set player {PlayerId} active={IsActive}", player.Id, isActive);
+            StatusMessage = $"Fehler: {ex.Message}";
+        }
+    }
+
     partial void OnSelectedPlayerChanged(Player? value)
     {
         _ = LoadSelectedPlayerAsync(value);

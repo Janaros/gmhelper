@@ -15,6 +15,8 @@ public class AppDbContext : DbContext
     public DbSet<Player> Players => Set<Player>();
     public DbSet<StatField> StatFields => Set<StatField>();
     public DbSet<Monster> Monsters => Set<Monster>();
+    public DbSet<CombatEncounter> CombatEncounters => Set<CombatEncounter>();
+    public DbSet<CombatParticipant> CombatParticipants => Set<CombatParticipant>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

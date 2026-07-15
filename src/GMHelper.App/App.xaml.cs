@@ -71,6 +71,7 @@ public partial class App : Application
         services.AddSingleton<IMonsterService, MonsterService>();
         services.AddSingleton<IMonsterImportService, MonsterImportService>();
         services.AddSingleton<IMonsterExportService, MonsterExportService>();
+        services.AddSingleton<ICombatTrackerService, CombatTrackerService>();
 
         services.AddSingleton<ViewModels.ICampaignDetailViewModelFactory, ViewModels.CampaignDetailViewModelFactory>();
         services.AddSingleton<ViewModels.CampaignListViewModel>();
