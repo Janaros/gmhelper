@@ -17,6 +17,7 @@ public class AppDbContext : DbContext
     public DbSet<Monster> Monsters => Set<Monster>();
     public DbSet<CombatEncounter> CombatEncounters => Set<CombatEncounter>();
     public DbSet<CombatParticipant> CombatParticipants => Set<CombatParticipant>();
+    public DbSet<SessionNote> SessionNotes => Set<SessionNote>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

@@ -30,7 +30,7 @@
                 <views:CombatTrackerView DataContext="{Binding CombatTracker}" />
             </TabItem>
             <TabItem Header="Notizen">
-                <TextBlock Text="Kommt in Phase 9 (Markdown-Session-Notizen)." Margin="12" Foreground="Gray" />
+                <views:SessionNotesView DataContext="{Binding SessionNotes}" />
             </TabItem>
         </TabControl>
     </Grid>

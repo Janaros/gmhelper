@@ -12,6 +12,7 @@ public partial class CampaignDetailViewModel : ObservableObject
     public ImageLibraryViewModel ImageLibrary { get; }
     public RosterViewModel Roster { get; }
     public CombatTrackerViewModel CombatTracker { get; }
+    public SessionNotesViewModel SessionNotes { get; }
 
     public event EventHandler? BackRequested;
 
@@ -20,13 +21,15 @@ public partial class CampaignDetailViewModel : ObservableObject
         PdfLibraryViewModel pdfLibrary,
         ImageLibraryViewModel imageLibrary,
         RosterViewModel roster,
-        CombatTrackerViewModel combatTracker)
+        CombatTrackerViewModel combatTracker,
+        SessionNotesViewModel sessionNotes)
     {
         Campaign = campaign;
         PdfLibrary = pdfLibrary;
         ImageLibrary = imageLibrary;
         Roster = roster;
         CombatTracker = combatTracker;
+        SessionNotes = sessionNotes;
     }
 
     public async Task InitializeAsync()
@@ -35,6 +38,7 @@ public partial class CampaignDetailViewModel : ObservableObject
         await ImageLibrary.InitializeAsync();
         await Roster.InitializeAsync();
         await CombatTracker.InitializeAsync();
+        await SessionNotes.InitializeAsync();
     }
 
     [RelayCommand]

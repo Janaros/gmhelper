@@ -19,6 +19,7 @@ public class CampaignDetailViewModelFactory : ICampaignDetailViewModelFactory
     private readonly IStatFieldService _statFieldService;
     private readonly ICombatTrackerService _combatTrackerService;
     private readonly IMonsterService _monsterService;
+    private readonly ISessionNotesService _sessionNotesService;
     private readonly IMessenger _messenger;
     private readonly IWindowManager _windowManager;
     private readonly ILoggerFactory _loggerFactory;
@@ -30,6 +31,7 @@ public class CampaignDetailViewModelFactory : ICampaignDetailViewModelFactory
         IStatFieldService statFieldService,
         ICombatTrackerService combatTrackerService,
         IMonsterService monsterService,
+        ISessionNotesService sessionNotesService,
         IMessenger messenger,
         IWindowManager windowManager,
         ILoggerFactory loggerFactory)
@@ -40,6 +42,7 @@ public class CampaignDetailViewModelFactory : ICampaignDetailViewModelFactory
         _statFieldService = statFieldService;
         _combatTrackerService = combatTrackerService;
         _monsterService = monsterService;
+        _sessionNotesService = sessionNotesService;
         _messenger = messenger;
         _windowManager = windowManager;
         _loggerFactory = loggerFactory;
@@ -71,6 +74,11 @@ public class CampaignDetailViewModelFactory : ICampaignDetailViewModelFactory
             _monsterService,
             _loggerFactory.CreateLogger<CombatTrackerViewModel>());
 
-        return new CampaignDetailViewModel(campaign, pdfLibrary, imageLibrary, roster, combatTracker);
+        var sessionNotes = new SessionNotesViewModel(
+            campaign,
+            _sessionNotesService,
+            _loggerFactory.CreateLogger<SessionNotesViewModel>());
+
+        return new CampaignDetailViewModel(campaign, pdfLibrary, imageLibrary, roster, combatTracker, sessionNotes);
     }
 }
