@@ -7,7 +7,7 @@
         xmlns:vm="clr-namespace:GMHelper.App.ViewModels"
         xmlns:views="clr-namespace:GMHelper.App.Views"
         mc:Ignorable="d"
-        Title="GMHelper" Height="600" Width="900">
+        Title="GMHelper" Height="600" Width="960">
     <Window.Resources>
         <DataTemplate DataType="{x:Type vm:CampaignListViewModel}">
             <views:CampaignListView />
@@ -18,7 +18,56 @@
         <DataTemplate DataType="{x:Type vm:MonsterDatabaseViewModel}">
             <views:MonsterDatabaseView />
         </DataTemplate>
+
+        <Style x:Key="NavRailItemStyle" TargetType="ToggleButton">
+            <Setter Property="HorizontalContentAlignment" Value="Left" />
+            <Setter Property="Padding" Value="16,10" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ToggleButton">
+                        <Border x:Name="Bg" Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Left" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="Bg" Property="Background" Value="#FFD8E6F7" />
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bg" Property="Background" Value="#FFEAF0F7" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </Window.Resources>
 
-    <ContentControl Content="{Binding CurrentViewModel}" />
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="200" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <Border Grid.Column="0" Background="#FFF5F5F5" BorderBrush="#FFDDDDDD" BorderThickness="0,0,1,0">
+            <StackPanel Margin="0,16,0,0">
+                <TextBlock Text="GMHelper" FontSize="18" FontWeight="Bold" Margin="16,0,0,20" />
+
+                <ToggleButton Content="📁 Kampagnen"
+                              Style="{StaticResource NavRailItemStyle}"
+                              IsChecked="{Binding IsCampaignsSection, Mode=OneWay}"
+                              Command="{Binding NavigateToCampaignsCommand}" />
+
+                <ToggleButton Content="🐉 Monster-Datenbank"
+                              Style="{StaticResource NavRailItemStyle}"
+                              IsChecked="{Binding IsMonsterDatabaseSection, Mode=OneWay}"
+                              Command="{Binding NavigateToMonsterDatabaseCommand}" />
+            </StackPanel>
+        </Border>
+
+        <ContentControl Grid.Column="1" Content="{Binding CurrentViewModel}" />
+    </Grid>
 </Window>
