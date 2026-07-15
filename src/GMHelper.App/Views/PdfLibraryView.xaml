@@ -6,47 +6,82 @@
              xmlns:local="clr-namespace:GMHelper.App"
              xmlns:syncfusion="clr-namespace:Syncfusion.Windows.PdfViewer;assembly=Syncfusion.PdfViewer.WPF"
              mc:Ignorable="d">
+    <UserControl.Resources>
+        <Style x:Key="PdfTabStripStyle" TargetType="ListBox">
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="ItemsPanel">
+                <Setter.Value>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal" />
+                    </ItemsPanelTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="ItemContainerStyle">
+                <Setter.Value>
+                    <Style TargetType="ListBoxItem">
+                        <Setter Property="Padding" Value="12,6" />
+                        <Setter Property="Margin" Value="0,0,2,0" />
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="ListBoxItem">
+                                    <Border x:Name="Bd"
+                                            Background="#FFF0F0F0"
+                                            BorderBrush="#FFDDDDDD"
+                                            BorderThickness="1,1,1,0"
+                                            CornerRadius="4,4,0,0"
+                                            Padding="{TemplateBinding Padding}">
+                                        <ContentPresenter />
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsSelected" Value="True">
+                                            <Setter TargetName="Bd" Property="Background" Value="White" />
+                                            <Setter TargetName="Bd" Property="BorderBrush" Value="#FF3F87DA" />
+                                        </Trigger>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="Bd" Property="Background" Value="#FFE8EEF5" />
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
     <Grid Margin="8">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="220" />
-            <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
 
-        <Grid Grid.Column="0" Margin="0,0,8,0">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
+        <DockPanel Grid.Row="0" Margin="0,0,0,4">
+            <Button DockPanel.Dock="Left" Content="PDF hinzufügen" Margin="0,0,8,0" Click="AddPdfButton_Click" />
+            <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
+                <ListBox x:Name="PdfList"
+                         Style="{StaticResource PdfTabStripStyle}"
+                         ItemsSource="{Binding Pdfs}"
+                         SelectedItem="{Binding SelectedPdf}"
+                         DisplayMemberPath="FileName" />
+            </ScrollViewer>
+        </DockPanel>
 
-            <Button Grid.Row="0" Content="PDF hinzufügen" Margin="0,0,0,8" Click="AddPdfButton_Click" />
+        <TextBlock Grid.Row="1"
+                   Text="{Binding StatusMessage}"
+                   Foreground="Red"
+                   TextWrapping="Wrap"
+                   Margin="0,0,0,4"
+                   Visibility="{Binding StatusMessage, Converter={x:Static local:NullToVisibilityConverter.Instance}}" />
 
-            <TextBlock Grid.Row="1"
-                       Text="{Binding StatusMessage}"
-                       Foreground="Red"
-                       TextWrapping="Wrap"
-                       Margin="0,0,0,8"
-                       Visibility="{Binding StatusMessage, Converter={x:Static local:NullToVisibilityConverter.Instance}}" />
+        <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0,0,0,4">
+            <ToggleButton x:Name="ToggleInkButton" Content="✏ Stift" Click="ToggleInkButton_Click" Padding="8,4" />
+            <Button Content="Speichern" Margin="8,0,0,0" Click="SaveButton_Click" Padding="8,4" />
+        </StackPanel>
 
-            <ListBox x:Name="PdfList"
-                     Grid.Row="2"
-                     ItemsSource="{Binding Pdfs}"
-                     SelectedItem="{Binding SelectedPdf}"
-                     DisplayMemberPath="FileName" />
-        </Grid>
-
-        <Grid Grid.Column="1">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
-
-            <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="0,0,0,8">
-                <ToggleButton x:Name="ToggleInkButton" Content="✏ Stift" Click="ToggleInkButton_Click" Padding="8,4" />
-                <Button Content="Speichern" Margin="8,0,0,0" Click="SaveButton_Click" Padding="8,4" />
-            </StackPanel>
-
-            <syncfusion:PdfViewerControl x:Name="PdfViewer" Grid.Row="1" />
-        </Grid>
+        <syncfusion:PdfViewerControl x:Name="PdfViewer" Grid.Row="3" />
     </Grid>
 </UserControl>
