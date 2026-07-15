@@ -23,7 +23,7 @@ public partial class PdfLibraryView : UserControl
         PdfViewer.CurrentPageChanged += PdfViewer_CurrentPageChanged;
 
         PdfViewer.InkAnnotationSettings.InkColor = Colors.Black;
-        PdfViewer.InkAnnotationSettings.Thickness = 2;
+        PdfViewer.InkAnnotationSettings.Thickness = 3;
         PdfViewer.InkAnnotationSettings.Opacity = 1f;
     }
 
@@ -109,6 +109,27 @@ public partial class PdfLibraryView : UserControl
         {
             ViewModel.StatusMessage = $"Fehler beim Speichern: {ex.Message}";
         }
+    }
+
+    private void InkColor_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is RadioButton { Background: SolidColorBrush brush })
+        {
+            PdfViewer.InkAnnotationSettings.InkColor = brush.Color;
+        }
+    }
+
+    private void InkThickness_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is RadioButton { Tag: string tag } && float.TryParse(tag, out var thickness))
+        {
+            PdfViewer.InkAnnotationSettings.Thickness = thickness;
+        }
+    }
+
+    private void TransparentCheckBox_Changed(object sender, RoutedEventArgs e)
+    {
+        PdfViewer.InkAnnotationSettings.Opacity = TransparentCheckBox.IsChecked == true ? 0.35f : 1f;
     }
 
     private void ResetInkMode()
