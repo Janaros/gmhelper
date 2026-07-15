@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:GMHelper.App"
+             xmlns:syncfusion="clr-namespace:Syncfusion.UI.Xaml.Grid;assembly=Syncfusion.SfGrid.WPF"
              mc:Ignorable="d">
     <UserControl.Resources>
         <SolidColorBrush x:Key="CurrentTurnBrush" Color="#FFEFD98A" />
@@ -52,54 +53,80 @@
                    Margin="0,0,0,8"
                    Visibility="{Binding StatusMessage, Converter={x:Static local:NullToVisibilityConverter.Instance}}" />
 
-        <ScrollViewer Grid.Row="3" VerticalScrollBarVisibility="Auto">
-            <ItemsControl ItemsSource="{Binding Participants}">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <Border Padding="6" Margin="0,0,0,4" CornerRadius="4">
-                            <Border.Style>
-                                <Style TargetType="Border">
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding IsCurrentTurn}" Value="True">
-                                            <Setter Property="Background" Value="{StaticResource CurrentTurnBrush}" />
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Border.Style>
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="140" />
-                                    <ColumnDefinition Width="60" />
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="60" />
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="60" />
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
+        <syncfusion:SfDataGrid Grid.Row="3"
+                                ItemsSource="{Binding Participants}"
+                                AutoGenerateColumns="False"
+                                AllowEditing="False"
+                                AllowSorting="False"
+                                AllowResizingColumns="True"
+                                HeaderRowHeight="32"
+                                RowHeight="44">
+            <syncfusion:SfDataGrid.RowStyle>
+                <Style TargetType="syncfusion:VirtualizingCellsControl">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsCurrentTurn}" Value="True">
+                            <Setter Property="Background" Value="{StaticResource CurrentTurnBrush}" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </syncfusion:SfDataGrid.RowStyle>
+            <syncfusion:SfDataGrid.Columns>
+                <syncfusion:GridTemplateColumn MappingName="DisplayName" HeaderText="Name" Width="150">
+                    <syncfusion:GridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBox Text="{Binding DisplayName}"
+                                     IsReadOnly="{Binding IsMonster, Converter={x:Static local:InverseBoolConverter.Instance}}"
+                                     BorderThickness="0" Background="Transparent"
+                                     VerticalContentAlignment="Center" Margin="6,0" />
+                        </DataTemplate>
+                    </syncfusion:GridTemplateColumn.CellTemplate>
+                </syncfusion:GridTemplateColumn>
 
-                                <TextBox Grid.Column="0" Text="{Binding DisplayName}" IsReadOnly="{Binding IsMonster, Converter={x:Static local:InverseBoolConverter.Instance}}" Margin="0,0,4,0" />
+                <syncfusion:GridTemplateColumn MappingName="InitiativeText" HeaderText="Initiative" Width="120">
+                    <syncfusion:GridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="6,0">
+                                <TextBox Text="{Binding InitiativeText}" Width="40" BorderThickness="0" Background="Transparent" />
+                                <Button Content="🎲" Width="28" Margin="4,0,0,0" Click="RollInitiativeButton_Click" Tag="{Binding}" ToolTip="W20 würfeln" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </syncfusion:GridTemplateColumn.CellTemplate>
+                </syncfusion:GridTemplateColumn>
 
-                                <TextBox Grid.Column="1" Text="{Binding InitiativeText}" ToolTip="Initiative" Margin="0,0,2,0" />
-                                <Button Grid.Column="2" Content="🎲" Width="28" Margin="0,0,8,0" Click="RollInitiativeButton_Click" Tag="{Binding}" ToolTip="W20 würfeln" />
-
-                                <Button Grid.Column="3" Content="−" Width="24" Click="DecrementHpButton_Click" Tag="{Binding}" />
-                                <TextBox Grid.Column="4" Text="{Binding TrackedValueText}" ToolTip="Aktuelle HP" />
-                                <Button Grid.Column="5" Content="+" Width="24" Margin="2,0,0,0" Click="IncrementHpButton_Click" Tag="{Binding}" />
-                                <TextBlock Grid.Column="6" Margin="4,0,8,0" VerticalAlignment="Center"
+                <syncfusion:GridTemplateColumn MappingName="TrackedValueText" HeaderText="HP" Width="170">
+                    <syncfusion:GridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="6,0">
+                                <Button Content="−" Width="24" Click="DecrementHpButton_Click" Tag="{Binding}" />
+                                <TextBox Text="{Binding TrackedValueText}" Width="40" Margin="2,0" BorderThickness="0" Background="Transparent" />
+                                <Button Content="+" Width="24" Click="IncrementHpButton_Click" Tag="{Binding}" />
+                                <TextBlock Margin="6,0,0,0" VerticalAlignment="Center"
                                            Text="{Binding MaxTrackedValue, StringFormat='/ {0}'}"
                                            Visibility="{Binding MaxTrackedValue, Converter={x:Static local:NullToVisibilityConverter.Instance}}" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </syncfusion:GridTemplateColumn.CellTemplate>
+                </syncfusion:GridTemplateColumn>
 
-                                <TextBox Grid.Column="8" Text="{Binding ConditionsText}" ToolTip="Zustände (frei, z.B. vergiftet)" Margin="0,0,8,0" />
+                <syncfusion:GridTemplateColumn MappingName="ConditionsText" HeaderText="Zustände" Width="220">
+                    <syncfusion:GridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBox Text="{Binding ConditionsText}"
+                                     ToolTip="Zustände (frei, z.B. vergiftet)"
+                                     BorderThickness="0" Background="Transparent"
+                                     VerticalContentAlignment="Center" Margin="6,0" />
+                        </DataTemplate>
+                    </syncfusion:GridTemplateColumn.CellTemplate>
+                </syncfusion:GridTemplateColumn>
 
-                                <Button Grid.Column="9" Content="✕" Width="24" Click="RemoveParticipantButton_Click" Tag="{Binding}" />
-                            </Grid>
-                        </Border>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
-        </ScrollViewer>
+                <syncfusion:GridTemplateColumn MappingName="Id" HeaderText="" Width="50" AllowResizing="False">
+                    <syncfusion:GridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button Content="✕" Width="24" Click="RemoveParticipantButton_Click" Tag="{Binding}" />
+                        </DataTemplate>
+                    </syncfusion:GridTemplateColumn.CellTemplate>
+                </syncfusion:GridTemplateColumn>
+            </syncfusion:SfDataGrid.Columns>
+        </syncfusion:SfDataGrid>
     </Grid>
 </UserControl>
