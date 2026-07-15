@@ -13,7 +13,6 @@ public partial class CampaignListViewModel : ObservableObject
     private readonly ILogger<CampaignListViewModel> _logger;
 
     public event EventHandler<Campaign>? CampaignOpened;
-    public event EventHandler? MonsterDatabaseRequested;
 
     public ObservableCollection<Campaign> Campaigns { get; } = new();
 
@@ -91,9 +90,6 @@ public partial class CampaignListViewModel : ObservableObject
 
         CampaignOpened?.Invoke(this, SelectedCampaign);
     }
-
-    [RelayCommand]
-    private void OpenMonsterDatabase() => MonsterDatabaseRequested?.Invoke(this, EventArgs.Empty);
 
     private async Task ReloadCampaignsAsync()
     {

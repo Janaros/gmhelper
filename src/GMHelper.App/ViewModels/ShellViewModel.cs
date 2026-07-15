@@ -1,4 +1,5 @@
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using GMHelper.Core.Entities;
 
 namespace GMHelper.App.ViewModels;
@@ -12,6 +13,15 @@ public partial class ShellViewModel : ObservableObject
     [ObservableProperty]
     private ObservableObject _currentViewModel;
 
+    /// <summary>Drives which nav-rail item is highlighted. Campaign list and campaign detail
+    /// both count as the "Campaigns" section.</summary>
+    [ObservableProperty]
+    private bool _isMonsterDatabaseSection;
+
+    public bool IsCampaignsSection => !IsMonsterDatabaseSection;
+
+    partial void OnIsMonsterDatabaseSectionChanged(bool value) => OnPropertyChanged(nameof(IsCampaignsSection));
+
     public ShellViewModel(
         CampaignListViewModel campaignListViewModel,
         MonsterDatabaseViewModel monsterDatabaseViewModel,
@@ -22,8 +32,7 @@ public partial class ShellViewModel : ObservableObject
         _detailFactory = detailFactory;
 
         _campaignListViewModel.CampaignOpened += OnCampaignOpened;
-        _campaignListViewModel.MonsterDatabaseRequested += OnMonsterDatabaseRequested;
-        _monsterDatabaseViewModel.BackRequested += OnMonsterDatabaseBackRequested;
+        _monsterDatabaseViewModel.BackRequested += (_, _) => NavigateToCampaigns();
 
         _currentViewModel = _campaignListViewModel;
     }
@@ -33,11 +42,27 @@ public partial class ShellViewModel : ObservableObject
         await _campaignListViewModel.InitializeAsync();
     }
 
+    [RelayCommand]
+    private void NavigateToCampaigns()
+    {
+        CurrentViewModel = _campaignListViewModel;
+        IsMonsterDatabaseSection = false;
+    }
+
+    [RelayCommand]
+    private async Task NavigateToMonsterDatabaseAsync()
+    {
+        CurrentViewModel = _monsterDatabaseViewModel;
+        IsMonsterDatabaseSection = true;
+        await _monsterDatabaseViewModel.InitializeAsync();
+    }
+
     private async void OnCampaignOpened(object? sender, Campaign campaign)
     {
         var detail = _detailFactory.Create(campaign);
         detail.BackRequested += OnDetailBackRequested;
         CurrentViewModel = detail;
+        IsMonsterDatabaseSection = false;
 
         await detail.InitializeAsync();
     }
@@ -49,17 +74,6 @@ public partial class ShellViewModel : ObservableObject
             detail.BackRequested -= OnDetailBackRequested;
         }
 
-        CurrentViewModel = _campaignListViewModel;
-    }
-
-    private async void OnMonsterDatabaseRequested(object? sender, EventArgs e)
-    {
-        CurrentViewModel = _monsterDatabaseViewModel;
-        await _monsterDatabaseViewModel.InitializeAsync();
-    }
-
-    private void OnMonsterDatabaseBackRequested(object? sender, EventArgs e)
-    {
-        CurrentViewModel = _campaignListViewModel;
+        NavigateToCampaigns();
     }
 }
