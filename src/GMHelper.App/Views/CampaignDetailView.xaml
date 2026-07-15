@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:views="clr-namespace:GMHelper.App.Views"
+             xmlns:tools="clr-namespace:Syncfusion.Windows.Tools.Controls;assembly=Syncfusion.Tools.WPF"
              mc:Ignorable="d">
     <Grid Margin="12">
         <Grid.RowDefinitions>
@@ -16,22 +17,22 @@
             <TextBlock Text="{Binding Campaign.Name}" FontSize="18" FontWeight="Bold" Margin="12,0,0,0" VerticalAlignment="Center" />
         </StackPanel>
 
-        <TabControl Grid.Row="1">
-            <TabItem Header="PDFs">
+        <tools:TabControlExt Grid.Row="1">
+            <tools:TabItemExt Header="PDFs">
                 <views:PdfLibraryView DataContext="{Binding PdfLibrary}" />
-            </TabItem>
-            <TabItem Header="Bilder">
+            </tools:TabItemExt>
+            <tools:TabItemExt Header="Bilder">
                 <views:ImageLibraryView DataContext="{Binding ImageLibrary}" />
-            </TabItem>
-            <TabItem Header="Spieler">
+            </tools:TabItemExt>
+            <tools:TabItemExt Header="Spieler">
                 <views:RosterView DataContext="{Binding Roster}" />
-            </TabItem>
-            <TabItem Header="Kampf">
+            </tools:TabItemExt>
+            <tools:TabItemExt Header="Kampf">
                 <views:CombatTrackerView DataContext="{Binding CombatTracker}" />
-            </TabItem>
-            <TabItem Header="Notizen">
+            </tools:TabItemExt>
+            <tools:TabItemExt Header="Notizen">
                 <views:SessionNotesView DataContext="{Binding SessionNotes}" />
-            </TabItem>
-        </TabControl>
+            </tools:TabItemExt>
+        </tools:TabControlExt>
     </Grid>
 </UserControl>
