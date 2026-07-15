@@ -20,6 +20,11 @@ public partial class App : Application
     {
         RegisterSyncfusionLicense();
 
+        // Must be set before any Window is constructed so standard WPF controls (Button,
+        // TabControl, ListBox, ...) pick up the theme too, not just Syncfusion controls.
+        Syncfusion.SfSkinManager.SfSkinManager.ApplyThemeAsDefaultStyle = true;
+        Syncfusion.SfSkinManager.SfSkinManager.ApplicationTheme = new Syncfusion.SfSkinManager.Theme("Windows11Light");
+
         var appPaths = new AppPaths(ResolveDataRoot());
         Directory.CreateDirectory(appPaths.DataRoot);
         Directory.CreateDirectory(appPaths.LogsFolder);
