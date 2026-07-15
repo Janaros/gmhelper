@@ -20,6 +20,7 @@ public class CampaignDetailViewModelFactory : ICampaignDetailViewModelFactory
     private readonly ICombatTrackerService _combatTrackerService;
     private readonly IMonsterService _monsterService;
     private readonly ISessionNotesService _sessionNotesService;
+    private readonly ICampaignExportService _campaignExportService;
     private readonly IMessenger _messenger;
     private readonly IWindowManager _windowManager;
     private readonly ILoggerFactory _loggerFactory;
@@ -32,6 +33,7 @@ public class CampaignDetailViewModelFactory : ICampaignDetailViewModelFactory
         ICombatTrackerService combatTrackerService,
         IMonsterService monsterService,
         ISessionNotesService sessionNotesService,
+        ICampaignExportService campaignExportService,
         IMessenger messenger,
         IWindowManager windowManager,
         ILoggerFactory loggerFactory)
@@ -43,6 +45,7 @@ public class CampaignDetailViewModelFactory : ICampaignDetailViewModelFactory
         _combatTrackerService = combatTrackerService;
         _monsterService = monsterService;
         _sessionNotesService = sessionNotesService;
+        _campaignExportService = campaignExportService;
         _messenger = messenger;
         _windowManager = windowManager;
         _loggerFactory = loggerFactory;
@@ -79,6 +82,14 @@ public class CampaignDetailViewModelFactory : ICampaignDetailViewModelFactory
             _sessionNotesService,
             _loggerFactory.CreateLogger<SessionNotesViewModel>());
 
-        return new CampaignDetailViewModel(campaign, pdfLibrary, imageLibrary, roster, combatTracker, sessionNotes);
+        return new CampaignDetailViewModel(
+            campaign,
+            pdfLibrary,
+            imageLibrary,
+            roster,
+            combatTracker,
+            sessionNotes,
+            _campaignExportService,
+            _loggerFactory.CreateLogger<CampaignDetailViewModel>());
     }
 }

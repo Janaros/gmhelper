@@ -34,4 +34,8 @@ public partial class SecondaryDisplayViewModel : ObservableObject,
     {
         IsBlackedOut = message.IsBlackedOut;
     }
+
+    /// <summary>Backing toggle for the global blackout hotkey (works regardless of which
+    /// campaign tab is currently open, unlike ImageLibraryViewModel's per-campaign toggle).</summary>
+    public void ToggleBlackout() => IsBlackedOut = !IsBlackedOut;
 }

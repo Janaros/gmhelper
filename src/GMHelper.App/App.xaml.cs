@@ -15,6 +15,7 @@ namespace GMHelper.App;
 public partial class App : Application
 {
     private IHost? _host;
+    private Views.SecondaryDisplayWindow? _secondaryDisplayWindow;
 
     protected override void OnStartup(StartupEventArgs e)
     {
@@ -50,7 +51,7 @@ public partial class App : Application
 
         // Created once at startup so its window position/blackout state persists for the
         // whole session; it stays hidden until the GM opens it via IWindowManager.
-        _host.Services.GetRequiredService<Views.SecondaryDisplayWindow>();
+        _secondaryDisplayWindow = _host.Services.GetRequiredService<Views.SecondaryDisplayWindow>();
 
         ShutdownMode = ShutdownMode.OnMainWindowClose;
 
@@ -78,6 +79,7 @@ public partial class App : Application
         services.AddSingleton<IMonsterExportService, MonsterExportService>();
         services.AddSingleton<ICombatTrackerService, CombatTrackerService>();
         services.AddSingleton<ISessionNotesService, SessionNotesService>();
+        services.AddSingleton<ICampaignExportService, CampaignExportService>();
 
         services.AddSingleton<ViewModels.ICampaignDetailViewModelFactory, ViewModels.CampaignDetailViewModelFactory>();
         services.AddSingleton<ViewModels.CampaignListViewModel>();
@@ -132,6 +134,7 @@ public partial class App : Application
 
     protected override void OnExit(ExitEventArgs e)
     {
+        _secondaryDisplayWindow?.SaveCurrentPlacement();
         _host?.Dispose();
         Log.CloseAndFlush();
         base.OnExit(e);
