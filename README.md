@@ -14,15 +14,15 @@ WPF-Desktop-Anwendung für Game Master, die eine komplette Tabletop-RPG-Session 
 
 ## Installation
 
-GMHelper wird per **ClickOnce** verteilt — Installation und spätere Updates laufen über einen einzigen Link, ohne separaten Installer-Download:
+**➡ [GMHelper-Setup-1.0.0.exe herunterladen](https://github.com/Janaros/gmhelper/releases/latest)**
 
-**➡ [GMHelper installieren](https://janaros.github.io/gmhelper/GMHelper.App.application)**
+Installer herunterladen und ausführen — kein Adminrecht nötig, installiert nur für den aktuellen Benutzer (`%LocalAppData%\Programs\GMHelper`), legt eine Startmenü-Verknüpfung an und lässt sich über "Apps & Features" wieder sauber deinstallieren.
 
 Hinweise:
-- Die Anwendung ist **nicht code-signiert** (kein kostenpflichtiges Zertifikat vorhanden) — Windows zeigt beim ersten Start eine "Unbekannter Herausgeber"-Warnung. Das ist erwartet.
+- Die Anwendung ist **nicht code-signiert** (kein kostenpflichtiges Zertifikat vorhanden) — Windows zeigt beim ersten Start eine "Unbekannter Herausgeber"-Warnung (SmartScreen). Das ist erwartet.
 - GMHelper nutzt für die PDF-Anzeige/-Annotation eine kommerzielle Syncfusion-Komponente. Installierte Kopien laufen ohne eigenen Lizenzschlüssel dauerhaft im unlizenzierten Trial-Modus (Hinweisdialog/Wasserzeichen im PDF-Viewer), bleiben aber ansonsten voll funktionsfähig.
 - Benötigt Windows 10/11 (x64). Die Anwendung ist self-contained und bringt die .NET-Runtime mit — es muss nichts separat installiert werden.
-- ClickOnce-Updates: Beim nächsten Start wird automatisch auf eine neuere Version geprüft.
+- Updates: Es gibt aktuell kein Auto-Update — für eine neue Version die aktuelle `GMHelper-Setup-*.exe` von der [Releases-Seite](https://github.com/Janaros/gmhelper/releases) herunterladen und erneut ausführen (überschreibt die vorhandene Installation).
 
 ## Lokal bauen
 
@@ -40,12 +40,13 @@ Beim ersten Start im Dev-Setup legt die App ihre Daten (SQLite-DB, kopierte PDFs
 
 Architektur, Konventionen und der vollständige Git-Workflow sind in [CLAUDE.md](CLAUDE.md) dokumentiert.
 
-## ClickOnce-Release veröffentlichen
+## Installer veröffentlichen
 
-Für Maintainer mit Visual Studio (wird für das ClickOnce-Manifest-Tooling benötigt, siehe [CLAUDE.md](CLAUDE.md)):
+Für Maintainer (benötigt [Inno Setup](https://jrsoftware.org/isinfo.php) und die [GitHub CLI](https://cli.github.com/)):
 
 ```
-pwsh scripts/Deploy-GhPages.ps1
+pwsh scripts/Build-InnoInstaller.ps1
+gh release create vX.Y.Z dist/GMHelper-Setup-X.Y.Z.exe --title "GMHelper X.Y.Z" --notes "..."
 ```
 
-Baut, published und deployed die aktuelle Version (`<Version>` in `GMHelper.App.csproj`, bei jeder Veröffentlichung hochzählen) auf den `gh-pages`-Branch.
+`<Version>` in `GMHelper.App.csproj` bei jeder Veröffentlichung hochzählen (erscheint auch im About-Dialog).
