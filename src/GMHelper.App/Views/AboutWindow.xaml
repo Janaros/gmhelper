@@ -5,6 +5,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         mc:Ignorable="d"
         Title="Über GMHelper"
+        Icon="/Assets/GMHelper.ico"
         Width="320" Height="220"
         WindowStartupLocation="CenterOwner"
         ResizeMode="NoResize"

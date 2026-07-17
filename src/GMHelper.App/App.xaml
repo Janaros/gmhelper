@@ -3,6 +3,17 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:GMHelper.App">
     <Application.Resources>
+        <!-- Central color palette. Individual views should reference these brushes instead of
+             hardcoding hex values, so the app reads as one consistent system rather than each
+             view improvising its own near-identical shade of blue/gray. -->
+        <SolidColorBrush x:Key="PrimaryBrush" Color="#FF3F87DA" />
+        <SolidColorBrush x:Key="PrimaryLightBrush" Color="#FFD8E6F7" />
+        <SolidColorBrush x:Key="PrimaryHoverBrush" Color="#FFEAF0F7" />
+        <SolidColorBrush x:Key="SurfaceBrush" Color="#FFF5F5F5" />
+        <SolidColorBrush x:Key="SurfaceAltBrush" Color="#FFF0F0F0" />
+        <SolidColorBrush x:Key="AppBorderBrush" Color="#FFDDDDDD" />
+        <SolidColorBrush x:Key="MutedTextBrush" Color="#FF666666" />
+
         <!-- The global Syncfusion Windows11Light theme (applied as the default style for all
              standard WPF controls in App.xaml.cs) vertically centers TextBox content, which is
              correct for single-line inputs but makes multi-line editors visually "jump" as their
