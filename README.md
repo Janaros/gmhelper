@@ -14,7 +14,7 @@ WPF-Desktop-Anwendung für Game Master, die eine komplette Tabletop-RPG-Session 
 
 ## Installation
 
-**➡ [GMHelper-Setup-1.0.0.exe herunterladen](https://github.com/Janaros/gmhelper/releases/latest)**
+**➡ [Neueste Version herunterladen](https://github.com/Janaros/gmhelper/releases/latest)**
 
 Installer herunterladen und ausführen — kein Adminrecht nötig, installiert nur für den aktuellen Benutzer (`%LocalAppData%\Programs\GMHelper`), legt eine Startmenü-Verknüpfung an und lässt sich über "Apps & Features" wieder sauber deinstallieren.
 
