@@ -6,6 +6,7 @@
         xmlns:local="clr-namespace:GMHelper.App"
         mc:Ignorable="d"
         Title="GMHelper – Spieleransicht"
+        Icon="/Assets/GMHelper.ico"
         Background="Black"
         WindowStartupLocation="Manual"
         Width="1024" Height="768">

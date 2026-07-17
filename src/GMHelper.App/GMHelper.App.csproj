@@ -11,6 +11,11 @@
        the gitignored syncfusion-license.local.txt so installed copies run licensed without the
        key ever entering the (public) repo. Normal dev builds never set the property, so nothing
        is embedded there - dev reads the file from the repo root at runtime instead. -->
+  <ItemGroup>
+    <Resource Include="Assets\GMHelper.ico" />
+    <Resource Include="Assets\GMHelper-background.png" />
+  </ItemGroup>
+
   <ItemGroup Condition="'$(SyncfusionLicenseFile)' != '' and Exists('$(SyncfusionLicenseFile)')">
     <EmbeddedResource Include="$(SyncfusionLicenseFile)" LogicalName="GMHelper.App.SyncfusionLicense" Visible="false" />
   </ItemGroup>
@@ -47,7 +52,8 @@
     <UseWPF>true</UseWPF>
     <UseWindowsForms>true</UseWindowsForms>
     <!-- Bump this with every change that ships (shown in the About dialog). -->
-    <Version>1.0.1</Version>
+    <Version>1.0.2</Version>
+    <ApplicationIcon>Assets\GMHelper.ico</ApplicationIcon>
   </PropertyGroup>
 
 </Project>

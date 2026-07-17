@@ -26,8 +26,8 @@
                             <Setter.Value>
                                 <ControlTemplate TargetType="ListBoxItem">
                                     <Border x:Name="Bd"
-                                            Background="#FFF0F0F0"
-                                            BorderBrush="#FFDDDDDD"
+                                            Background="{StaticResource SurfaceAltBrush}"
+                                            BorderBrush="{StaticResource AppBorderBrush}"
                                             BorderThickness="1,1,1,0"
                                             CornerRadius="4,4,0,0"
                                             Padding="{TemplateBinding Padding}">
@@ -36,10 +36,10 @@
                                     <ControlTemplate.Triggers>
                                         <Trigger Property="IsSelected" Value="True">
                                             <Setter TargetName="Bd" Property="Background" Value="White" />
-                                            <Setter TargetName="Bd" Property="BorderBrush" Value="#FF3F87DA" />
+                                            <Setter TargetName="Bd" Property="BorderBrush" Value="{StaticResource PrimaryBrush}" />
                                         </Trigger>
                                         <Trigger Property="IsMouseOver" Value="True">
-                                            <Setter TargetName="Bd" Property="Background" Value="#FFE8EEF5" />
+                                            <Setter TargetName="Bd" Property="Background" Value="{StaticResource PrimaryHoverBrush}" />
                                         </Trigger>
                                     </ControlTemplate.Triggers>
                                 </ControlTemplate>
@@ -58,7 +58,7 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="RadioButton">
                         <Border Background="{TemplateBinding Background}" BorderBrush="#FF999999" BorderThickness="1" CornerRadius="2">
-                            <Border x:Name="Sel" BorderBrush="#FF3F87DA" BorderThickness="2" CornerRadius="2" Visibility="Collapsed" />
+                            <Border x:Name="Sel" BorderBrush="{StaticResource PrimaryBrush}" BorderThickness="2" CornerRadius="2" Visibility="Collapsed" />
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsChecked" Value="True">

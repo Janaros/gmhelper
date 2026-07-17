@@ -7,7 +7,8 @@
         xmlns:vm="clr-namespace:GMHelper.App.ViewModels"
         xmlns:views="clr-namespace:GMHelper.App.Views"
         mc:Ignorable="d"
-        Title="GMHelper" Height="600" Width="960">
+        Title="GMHelper" Height="600" Width="960"
+        Icon="/Assets/GMHelper.ico">
     <Window.Resources>
         <DataTemplate DataType="{x:Type vm:CampaignListViewModel}">
             <views:CampaignListView />
@@ -34,10 +35,10 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsChecked" Value="True">
-                                <Setter TargetName="Bg" Property="Background" Value="#FFD8E6F7" />
+                                <Setter TargetName="Bg" Property="Background" Value="{StaticResource PrimaryLightBrush}" />
                             </Trigger>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="Bg" Property="Background" Value="#FFEAF0F7" />
+                                <Setter TargetName="Bg" Property="Background" Value="{StaticResource PrimaryHoverBrush}" />
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -52,7 +53,7 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <Border Grid.Column="0" Background="#FFF5F5F5" BorderBrush="#FFDDDDDD" BorderThickness="0,0,1,0">
+        <Border Grid.Column="0" Background="{StaticResource SurfaceBrush}" BorderBrush="{StaticResource AppBorderBrush}" BorderThickness="0,0,1,0">
             <DockPanel>
                 <Button DockPanel.Dock="Bottom"
                         Content="ⓘ Info"

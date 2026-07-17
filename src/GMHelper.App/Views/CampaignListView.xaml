@@ -25,13 +25,23 @@
                    Margin="0,0,0,8"
                    Visibility="{Binding StatusMessage, Converter={x:Static local:NullToVisibilityConverter.Instance}}" />
 
-        <ListBox Grid.Row="2"
-                 ItemsSource="{Binding Campaigns}"
-                 SelectedItem="{Binding SelectedCampaign}"
-                 DisplayMemberPath="Name">
-            <ListBox.InputBindings>
-                <MouseBinding MouseAction="LeftDoubleClick" Command="{Binding OpenSelectedCampaignCommand}" />
-            </ListBox.InputBindings>
-        </ListBox>
+        <Grid Grid.Row="2">
+            <Image Source="/Assets/GMHelper-background.png"
+                   Opacity="0.06"
+                   Stretch="Uniform"
+                   Width="480"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Center"
+                   IsHitTestVisible="False" />
+
+            <ListBox ItemsSource="{Binding Campaigns}"
+                     SelectedItem="{Binding SelectedCampaign}"
+                     DisplayMemberPath="Name"
+                     Background="Transparent">
+                <ListBox.InputBindings>
+                    <MouseBinding MouseAction="LeftDoubleClick" Command="{Binding OpenSelectedCampaignCommand}" />
+                </ListBox.InputBindings>
+            </ListBox>
+        </Grid>
     </Grid>
 </UserControl>
