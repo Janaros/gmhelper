@@ -3,6 +3,17 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:GMHelper.App">
     <Application.Resources>
-
+        <!-- The global Syncfusion Windows11Light theme (applied as the default style for all
+             standard WPF controls in App.xaml.cs) vertically centers TextBox content, which is
+             correct for single-line inputs but makes multi-line editors visually "jump" as their
+             content grows/shrinks while typing, since the whole re-centered block shifts every
+             keystroke. Force top alignment back for AcceptsReturn TextBoxes only. -->
+        <Style TargetType="TextBox">
+            <Style.Triggers>
+                <Trigger Property="AcceptsReturn" Value="True">
+                    <Setter Property="VerticalContentAlignment" Value="Top" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
     </Application.Resources>
 </Application>
