@@ -25,6 +25,39 @@ public partial class PdfLibraryView : UserControl
         PdfViewer.InkAnnotationSettings.InkColor = Colors.Black;
         PdfViewer.InkAnnotationSettings.Thickness = 3;
         PdfViewer.InkAnnotationSettings.Opacity = 1f;
+
+        PdfViewer.FreeTextAnnotationSettings.FontColor = Colors.Black;
+        PdfViewer.FreeTextAnnotationSettings.FontSize = 14;
+        PdfViewer.FreeTextAnnotationSettings.Background = Colors.Transparent;
+        PdfViewer.FreeTextAnnotationSettings.BorderColor = Colors.Transparent;
+
+        PdfViewer.RedactionSettings.UseOverlayText = true;
+        PdfViewer.RedactionSettings.FontColor = Colors.Black;
+        PdfViewer.RedactionSettings.FontSize = 14;
+        PdfViewer.RedactionSettings.FillColor = Colors.White;
+    }
+
+    private enum EditMode
+    {
+        None,
+        Ink,
+        FreeText,
+        Redact,
+    }
+
+    private void SetEditMode(EditMode mode)
+    {
+        ToggleInkButton.IsChecked = mode == EditMode.Ink;
+        ToggleFreeTextButton.IsChecked = mode == EditMode.FreeText;
+        ToggleRedactButton.IsChecked = mode == EditMode.Redact;
+
+        PdfViewer.AnnotationMode = mode switch
+        {
+            EditMode.Ink => PdfDocumentView.PdfViewerAnnotationMode.Ink,
+            EditMode.FreeText => PdfDocumentView.PdfViewerAnnotationMode.FreeText,
+            _ => PdfDocumentView.PdfViewerAnnotationMode.None,
+        };
+        PdfViewer.PageRedactor.EnableRedactionMode = mode == EditMode.Redact;
     }
 
     private async void AddPdfButton_Click(object sender, RoutedEventArgs e)
@@ -51,12 +84,12 @@ public partial class PdfLibraryView : UserControl
         if (ViewModel?.SelectedPdf is not { } pdf)
         {
             _loadedPdf = null;
-            ResetInkMode();
+            ResetEditMode();
             PdfViewer.Unload();
             return;
         }
 
-        ResetInkMode();
+        ResetEditMode();
 
         _loadedPdf = pdf;
         PdfViewer.Load(ViewModel.GetAbsoluteFilePath(pdf));
@@ -83,12 +116,14 @@ public partial class PdfLibraryView : UserControl
         await ViewModel.SaveLastViewedPageAsync(PdfViewer.CurrentPage);
     }
 
-    private void ToggleInkButton_Click(object sender, RoutedEventArgs e)
-    {
-        PdfViewer.AnnotationMode = ToggleInkButton.IsChecked == true
-            ? PdfDocumentView.PdfViewerAnnotationMode.Ink
-            : PdfDocumentView.PdfViewerAnnotationMode.None;
-    }
+    private void ToggleInkButton_Click(object sender, RoutedEventArgs e) =>
+        SetEditMode(ToggleInkButton.IsChecked == true ? EditMode.Ink : EditMode.None);
+
+    private void ToggleFreeTextButton_Click(object sender, RoutedEventArgs e) =>
+        SetEditMode(ToggleFreeTextButton.IsChecked == true ? EditMode.FreeText : EditMode.None);
+
+    private void ToggleRedactButton_Click(object sender, RoutedEventArgs e) =>
+        SetEditMode(ToggleRedactButton.IsChecked == true ? EditMode.Redact : EditMode.None);
 
     private async void SaveButton_Click(object sender, RoutedEventArgs e)
     {
@@ -135,9 +170,42 @@ public partial class PdfLibraryView : UserControl
         PdfViewer.InkAnnotationSettings.Opacity = TransparentCheckBox.IsChecked == true ? 0.35f : 1f;
     }
 
-    private void ResetInkMode()
+    private void FreeTextColor_Click(object sender, RoutedEventArgs e)
     {
-        ToggleInkButton.IsChecked = false;
-        PdfViewer.AnnotationMode = PdfDocumentView.PdfViewerAnnotationMode.None;
+        if (sender is RadioButton { Background: SolidColorBrush brush })
+        {
+            PdfViewer.FreeTextAnnotationSettings.FontColor = brush.Color;
+        }
+    }
+
+    private void FreeTextSize_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is RadioButton { Tag: string tag } && int.TryParse(tag, out var size))
+        {
+            PdfViewer.FreeTextAnnotationSettings.FontSize = size;
+        }
+    }
+
+    private void RedactColor_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is RadioButton { Background: SolidColorBrush brush })
+        {
+            PdfViewer.RedactionSettings.FontColor = brush.Color;
+        }
+    }
+
+    private void RedactOverlayTextBox_TextChanged(object sender, TextChangedEventArgs e)
+    {
+        PdfViewer.RedactionSettings.OverlayText = RedactOverlayTextBox.Text;
+    }
+
+    private void ApplyRedactionButton_Click(object sender, RoutedEventArgs e)
+    {
+        PdfViewer.PageRedactor.ApplyRedaction();
+    }
+
+    private void ResetEditMode()
+    {
+        SetEditMode(EditMode.None);
     }
 }

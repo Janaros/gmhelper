@@ -101,6 +101,8 @@
 
         <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0,0,0,4">
             <ToggleButton x:Name="ToggleInkButton" Content="✏ Stift" Click="ToggleInkButton_Click" Padding="8,4" />
+            <ToggleButton x:Name="ToggleFreeTextButton" Content="🔤 Block hinzufügen" Click="ToggleFreeTextButton_Click" Padding="8,4" Margin="4,0,0,0" />
+            <ToggleButton x:Name="ToggleRedactButton" Content="⛔ Text ersetzen" Click="ToggleRedactButton_Click" Padding="8,4" Margin="4,0,0,0" />
             <Button Content="Speichern" Margin="8,0,0,0" Click="SaveButton_Click" Padding="8,4" />
         </StackPanel>
 
@@ -123,6 +125,31 @@
                       Margin="16,0,0,0"
                       Checked="TransparentCheckBox_Changed"
                       Unchecked="TransparentCheckBox_Changed" />
+        </StackPanel>
+
+        <StackPanel Grid.Row="3" Orientation="Horizontal" Margin="0,0,0,4"
+                    Visibility="{Binding IsChecked, ElementName=ToggleFreeTextButton, Converter={x:Static local:BoolToVisibilityConverter.Instance}}">
+            <TextBlock Text="Schriftfarbe:" VerticalAlignment="Center" Margin="0,0,4,0" />
+            <RadioButton x:Name="FreeTextColorBlack" GroupName="FreeTextColor" Style="{StaticResource ColorSwatchStyle}" Background="Black" Click="FreeTextColor_Click" IsChecked="True" />
+            <RadioButton x:Name="FreeTextColorRed" GroupName="FreeTextColor" Style="{StaticResource ColorSwatchStyle}" Background="Red" Click="FreeTextColor_Click" />
+            <RadioButton x:Name="FreeTextColorBlue" GroupName="FreeTextColor" Style="{StaticResource ColorSwatchStyle}" Background="Blue" Click="FreeTextColor_Click" />
+
+            <TextBlock Text="Größe:" VerticalAlignment="Center" Margin="16,0,4,0" />
+            <RadioButton GroupName="FreeTextSize" Content="Klein" Tag="10" Click="FreeTextSize_Click" VerticalContentAlignment="Center" Margin="0,0,8,0" />
+            <RadioButton GroupName="FreeTextSize" Content="Normal" Tag="14" Click="FreeTextSize_Click" IsChecked="True" VerticalContentAlignment="Center" Margin="0,0,8,0" />
+            <RadioButton GroupName="FreeTextSize" Content="Groß" Tag="20" Click="FreeTextSize_Click" VerticalContentAlignment="Center" />
+        </StackPanel>
+
+        <StackPanel Grid.Row="3" Orientation="Horizontal" Margin="0,0,0,4"
+                    Visibility="{Binding IsChecked, ElementName=ToggleRedactButton, Converter={x:Static local:BoolToVisibilityConverter.Instance}}">
+            <TextBlock Text="Neuer Text:" VerticalAlignment="Center" Margin="0,0,4,0" />
+            <TextBox x:Name="RedactOverlayTextBox" Width="220" VerticalContentAlignment="Center" TextChanged="RedactOverlayTextBox_TextChanged" />
+
+            <TextBlock Text="Farbe:" VerticalAlignment="Center" Margin="16,0,4,0" />
+            <RadioButton x:Name="RedactColorBlack" GroupName="RedactColor" Style="{StaticResource ColorSwatchStyle}" Background="Black" Click="RedactColor_Click" IsChecked="True" />
+            <RadioButton x:Name="RedactColorRed" GroupName="RedactColor" Style="{StaticResource ColorSwatchStyle}" Background="Red" Click="RedactColor_Click" />
+
+            <Button Content="Anwenden" Margin="16,0,0,0" Padding="8,4" Click="ApplyRedactionButton_Click" />
         </StackPanel>
 
         <syncfusion:PdfViewerControl x:Name="PdfViewer" Grid.Row="4" />
