@@ -71,6 +71,32 @@ public class PdfLibraryService : IPdfLibraryService
         await db.SaveChangesAsync(cancellationToken);
     }
 
+    public async Task DeletePdfAsync(int pdfDocumentId, CancellationToken cancellationToken = default)
+    {
+        await using var db = await _dbContextFactory.CreateDbContextAsync(cancellationToken);
+
+        var pdfDocument = await db.PdfDocuments.FindAsync([pdfDocumentId], cancellationToken);
+        if (pdfDocument is null)
+        {
+            return;
+        }
+
+        var filePath = GetAbsoluteFilePath(pdfDocument);
+        if (File.Exists(filePath))
+        {
+            File.Delete(filePath);
+        }
+
+        var backupPath = filePath + ".bak";
+        if (File.Exists(backupPath))
+        {
+            File.Delete(backupPath);
+        }
+
+        db.PdfDocuments.Remove(pdfDocument);
+        await db.SaveChangesAsync(cancellationToken);
+    }
+
     public string GetAbsoluteFilePath(PdfDocument pdfDocument) =>
         Path.Combine(_appPaths.DataRoot, pdfDocument.StoredRelativePath);
 

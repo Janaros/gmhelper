@@ -7,5 +7,6 @@ public interface IImageLibraryService
 {
     Task<ImageAsset> AddImageAsync(ImageOwnerType ownerType, int ownerId, string sourceFilePath, ImageCategory category, CancellationToken cancellationToken = default);
     Task<IReadOnlyList<ImageAsset>> GetImagesAsync(ImageOwnerType ownerType, int ownerId, CancellationToken cancellationToken = default);
+    Task DeleteImageAsync(int imageAssetId, CancellationToken cancellationToken = default);
     string GetAbsoluteFilePath(ImageAsset imageAsset);
 }

@@ -73,6 +73,28 @@ public partial class ImageLibraryViewModel : ObservableObject
     public string GetAbsoluteFilePath(ImageAsset imageAsset) => _imageLibraryService.GetAbsoluteFilePath(imageAsset);
 
     [RelayCommand]
+    private async Task DeleteSelectedImageAsync()
+    {
+        if (SelectedImage is null)
+        {
+            return;
+        }
+
+        try
+        {
+            await _imageLibraryService.DeleteImageAsync(SelectedImage.Id);
+            SelectedImage = null;
+            StatusMessage = null;
+            await ReloadAsync();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to delete image {ImageAssetId}", SelectedImage?.Id);
+            StatusMessage = $"Fehler beim Entfernen: {ex.Message}";
+        }
+    }
+
+    [RelayCommand]
     private void OpenSecondaryDisplay() => _windowManager.ShowSecondaryDisplay();
 
     [RelayCommand]
