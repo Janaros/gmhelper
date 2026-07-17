@@ -7,6 +7,14 @@
     <Using Remove="System.Windows.Forms" />
   </ItemGroup>
 
+  <!-- Release-Packaging only: Build-InnoInstaller.ps1 passes SyncfusionLicenseFile pointing at
+       the gitignored syncfusion-license.local.txt so installed copies run licensed without the
+       key ever entering the (public) repo. Normal dev builds never set the property, so nothing
+       is embedded there - dev reads the file from the repo root at runtime instead. -->
+  <ItemGroup Condition="'$(SyncfusionLicenseFile)' != '' and Exists('$(SyncfusionLicenseFile)')">
+    <EmbeddedResource Include="$(SyncfusionLicenseFile)" LogicalName="GMHelper.App.SyncfusionLicense" Visible="false" />
+  </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\GMHelper.Core\GMHelper.Core.csproj" />
     <ProjectReference Include="..\GMHelper.Data\GMHelper.Data.csproj" />
@@ -39,7 +47,7 @@
     <UseWPF>true</UseWPF>
     <UseWindowsForms>true</UseWindowsForms>
     <!-- Bump this with every change that ships (shown in the About dialog). -->
-    <Version>1.0.0</Version>
+    <Version>1.0.1</Version>
   </PropertyGroup>
 
 </Project>

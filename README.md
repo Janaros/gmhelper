@@ -20,7 +20,7 @@ Installer herunterladen und ausführen — kein Adminrecht nötig, installiert n
 
 Hinweise:
 - Die Anwendung ist **nicht code-signiert** (kein kostenpflichtiges Zertifikat vorhanden) — Windows zeigt beim ersten Start eine "Unbekannter Herausgeber"-Warnung (SmartScreen). Das ist erwartet.
-- GMHelper nutzt für die PDF-Anzeige/-Annotation eine kommerzielle Syncfusion-Komponente. Installierte Kopien laufen ohne eigenen Lizenzschlüssel dauerhaft im unlizenzierten Trial-Modus (Hinweisdialog/Wasserzeichen im PDF-Viewer), bleiben aber ansonsten voll funktionsfähig.
+- GMHelper nutzt für die PDF-Anzeige/-Annotation eine kommerzielle Syncfusion-Komponente (Community License). Offizielle Installer-Builds sind lizenziert; nur selbst gebaute Kopien ohne eigenen Lizenzschlüssel laufen im Trial-Modus (Hinweisdialog/Wasserzeichen im PDF-Viewer), bleiben aber voll funktionsfähig.
 - Benötigt Windows 10/11 (x64). Die Anwendung ist self-contained und bringt die .NET-Runtime mit — es muss nichts separat installiert werden.
 - Updates: Es gibt aktuell kein Auto-Update — für eine neue Version die aktuelle `GMHelper-Setup-*.exe` von der [Releases-Seite](https://github.com/Janaros/gmhelper/releases) herunterladen und erneut ausführen (überschreibt die vorhandene Installation).
 

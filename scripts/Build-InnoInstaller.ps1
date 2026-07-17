@@ -38,8 +38,20 @@ if (Test-Path $publishDir) {
     Remove-Item -Recurse -Force $publishDir
 }
 
+# Embed the Syncfusion license key (gitignored local file) into the packaged build so installed
+# copies run licensed - the key never enters the public repo, only the shipped binary. Without
+# the file the installer still builds, but installed copies run in Syncfusion's trial mode.
+$licenseFile = Join-Path $repoRoot "syncfusion-license.local.txt"
+$licenseArgs = @()
+if (Test-Path $licenseFile) {
+    Write-Host "Embedding Syncfusion license key from syncfusion-license.local.txt."
+    $licenseArgs = @("-p:SyncfusionLicenseFile=$licenseFile")
+} else {
+    Write-Warning "syncfusion-license.local.txt nicht gefunden - installierte Kopien laufen im Syncfusion-Trial-Modus."
+}
+
 dotnet publish $csproj -c Release -r win-x64 --self-contained true -o $publishDir `
-    -p:PublishSingleFile=false
+    -p:PublishSingleFile=false @licenseArgs
 
 if ($LASTEXITCODE -ne 0) {
     throw "dotnet publish failed with exit code $LASTEXITCODE."
