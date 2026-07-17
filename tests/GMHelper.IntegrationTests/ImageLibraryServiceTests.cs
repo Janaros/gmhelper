@@ -75,6 +75,25 @@ public class ImageLibraryServiceTests : IDisposable
         Assert.Single(images);
     }
 
+    [Fact]
+    public async Task DeleteImageAsync_RemovesFileAndRow()
+    {
+        var image = await _sut.AddImageAsync(ImageOwnerType.Campaign, _campaignId, _sourceImagePath, ImageCategory.Map);
+        var filePath = _sut.GetAbsoluteFilePath(image);
+
+        await _sut.DeleteImageAsync(image.Id);
+
+        Assert.False(File.Exists(filePath));
+        var images = await _sut.GetImagesAsync(ImageOwnerType.Campaign, _campaignId);
+        Assert.DoesNotContain(images, i => i.Id == image.Id);
+    }
+
+    [Fact]
+    public async Task DeleteImageAsync_UnknownId_DoesNotThrow()
+    {
+        await _sut.DeleteImageAsync(999);
+    }
+
     public void Dispose()
     {
         _serviceProvider.Dispose();

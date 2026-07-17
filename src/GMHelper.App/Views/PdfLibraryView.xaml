@@ -82,6 +82,7 @@
 
         <DockPanel Grid.Row="0" Margin="0,0,0,4">
             <Button DockPanel.Dock="Left" Content="PDF hinzufügen" Margin="0,0,8,0" Click="AddPdfButton_Click" />
+            <Button DockPanel.Dock="Left" Content="PDF entfernen" Margin="0,0,8,0" Command="{Binding DeleteSelectedPdfCommand}" />
             <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
                 <ListBox x:Name="PdfList"
                          Style="{StaticResource PdfTabStripStyle}"

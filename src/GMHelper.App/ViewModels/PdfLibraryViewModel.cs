@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using GMHelper.Core.Abstractions;
 using GMHelper.Core.Entities;
 using Microsoft.Extensions.Logging;
@@ -67,6 +68,28 @@ public partial class PdfLibraryViewModel : ObservableObject
     }
 
     public string GetAbsoluteFilePath(PdfDocument pdfDocument) => _pdfLibraryService.GetAbsoluteFilePath(pdfDocument);
+
+    [RelayCommand]
+    private async Task DeleteSelectedPdfAsync()
+    {
+        if (SelectedPdf is null)
+        {
+            return;
+        }
+
+        try
+        {
+            await _pdfLibraryService.DeletePdfAsync(SelectedPdf.Id);
+            SelectedPdf = null;
+            StatusMessage = null;
+            await ReloadAsync();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to delete PDF {PdfDocumentId}", SelectedPdf?.Id);
+            StatusMessage = $"Fehler beim Entfernen: {ex.Message}";
+        }
+    }
 
     /// <summary>
     /// Backs up the current file before the viewer control overwrites it in place.

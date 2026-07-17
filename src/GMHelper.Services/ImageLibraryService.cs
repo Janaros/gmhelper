@@ -53,6 +53,26 @@ public class ImageLibraryService : IImageLibraryService
             .ToListAsync(cancellationToken);
     }
 
+    public async Task DeleteImageAsync(int imageAssetId, CancellationToken cancellationToken = default)
+    {
+        await using var db = await _dbContextFactory.CreateDbContextAsync(cancellationToken);
+
+        var imageAsset = await db.ImageAssets.FindAsync([imageAssetId], cancellationToken);
+        if (imageAsset is null)
+        {
+            return;
+        }
+
+        var filePath = GetAbsoluteFilePath(imageAsset);
+        if (File.Exists(filePath))
+        {
+            File.Delete(filePath);
+        }
+
+        db.ImageAssets.Remove(imageAsset);
+        await db.SaveChangesAsync(cancellationToken);
+    }
+
     public string GetAbsoluteFilePath(ImageAsset imageAsset) =>
         Path.Combine(_appPaths.DataRoot, imageAsset.StoredRelativePath);
 

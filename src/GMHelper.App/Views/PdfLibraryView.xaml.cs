@@ -50,6 +50,9 @@ public partial class PdfLibraryView : UserControl
     {
         if (ViewModel?.SelectedPdf is not { } pdf)
         {
+            _loadedPdf = null;
+            ResetInkMode();
+            PdfViewer.Unload();
             return;
         }
 

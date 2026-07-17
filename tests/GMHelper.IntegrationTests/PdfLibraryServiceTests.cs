@@ -88,6 +88,37 @@ public class PdfLibraryServiceTests : IDisposable
         Assert.Equal(File.ReadAllText(_sut.GetAbsoluteFilePath(pdf)), File.ReadAllText(backupPath));
     }
 
+    [Fact]
+    public async Task DeletePdfAsync_RemovesFileAndRow()
+    {
+        var pdf = await _sut.AddPdfToCampaignAsync(_campaignId, _sourcePdfPath);
+        var filePath = _sut.GetAbsoluteFilePath(pdf);
+
+        await _sut.DeletePdfAsync(pdf.Id);
+
+        Assert.False(File.Exists(filePath));
+        var pdfs = await _sut.GetPdfsForCampaignAsync(_campaignId);
+        Assert.DoesNotContain(pdfs, p => p.Id == pdf.Id);
+    }
+
+    [Fact]
+    public async Task DeletePdfAsync_AlsoRemovesBackupFile()
+    {
+        var pdf = await _sut.AddPdfToCampaignAsync(_campaignId, _sourcePdfPath);
+        await _sut.CreateBackupAsync(pdf);
+        var backupPath = _sut.GetAbsoluteFilePath(pdf) + ".bak";
+
+        await _sut.DeletePdfAsync(pdf.Id);
+
+        Assert.False(File.Exists(backupPath));
+    }
+
+    [Fact]
+    public async Task DeletePdfAsync_UnknownId_DoesNotThrow()
+    {
+        await _sut.DeletePdfAsync(999);
+    }
+
     public void Dispose()
     {
         _serviceProvider.Dispose();
