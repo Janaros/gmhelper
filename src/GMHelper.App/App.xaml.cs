@@ -93,31 +93,52 @@ public partial class App : Application
     }
 
     /// <summary>
-    /// Reads a Syncfusion Community License key from a local, gitignored file at the repo root
-    /// (syncfusion-license.local.txt) if present. Without it, Syncfusion controls run in an
-    /// unlicensed trial state (dialog/watermark) instead of the app crashing. Installed
-    /// (published) copies never have a repo root, so they always run unlicensed — the license
-    /// is tied to the developer's own account and must not be redistributed.
+    /// Registers the Syncfusion Community License key, looked up in this order:
+    /// 1. Dev workflow: local, gitignored syncfusion-license.local.txt at the repo root —
+    ///    keeps the key out of the public repo.
+    /// 2. Installed copies: an embedded resource that Build-InnoInstaller.ps1 injects at
+    ///    packaging time from that same local file (never present in normal dev builds).
+    /// Without either source, Syncfusion controls run in an unlicensed trial state
+    /// (dialog/watermark) instead of the app crashing.
     /// </summary>
     private static void RegisterSyncfusionLicense()
+    {
+        var licenseKey = TryReadLicenseFromRepoRoot() ?? TryReadEmbeddedLicense();
+        if (!string.IsNullOrEmpty(licenseKey))
+        {
+            Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(licenseKey);
+        }
+    }
+
+    private static string? TryReadLicenseFromRepoRoot()
     {
         var repoRoot = TryFindRepoRoot();
         if (repoRoot is null)
         {
-            return;
+            return null;
         }
 
         var licenseFilePath = Path.Combine(repoRoot, "syncfusion-license.local.txt");
         if (!File.Exists(licenseFilePath))
         {
-            return;
+            return null;
         }
 
         var licenseKey = File.ReadAllText(licenseFilePath).Trim();
-        if (!string.IsNullOrEmpty(licenseKey))
+        return licenseKey.Length == 0 ? null : licenseKey;
+    }
+
+    private static string? TryReadEmbeddedLicense()
+    {
+        using var stream = typeof(App).Assembly.GetManifestResourceStream("GMHelper.App.SyncfusionLicense");
+        if (stream is null)
         {
-            Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(licenseKey);
+            return null;
         }
+
+        using var reader = new StreamReader(stream);
+        var licenseKey = reader.ReadToEnd().Trim();
+        return licenseKey.Length == 0 ? null : licenseKey;
     }
 
     /// <summary>
