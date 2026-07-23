@@ -34,6 +34,12 @@
                     Command="{Binding NextTurnCommand}"
                     Visibility="{Binding HasStarted, Converter={x:Static local:BoolToVisibilityConverter.Instance}}" />
 
+            <Button Content="Reihenfolge aktualisieren"
+                    Command="{Binding RefreshOrderCommand}"
+                    Margin="8,0,0,0"
+                    ToolTip="Sortiert die Liste erneut nach Initiative (z.B. nach manueller Änderung)"
+                    Visibility="{Binding HasActiveEncounter, Converter={x:Static local:BoolToVisibilityConverter.Instance}}" />
+
             <Button Content="Kampf beenden"
                     Command="{Binding EndEncounterCommand}"
                     Margin="16,0,0,0"

@@ -166,6 +166,9 @@ public partial class CombatTrackerViewModel : ObservableObject
         }
     }
 
+    [RelayCommand]
+    private async Task RefreshOrderAsync() => await ReloadParticipantsAsync();
+
     public void RollInitiative(CombatParticipantVm vm) => vm.InitiativeText = Random.Shared.Next(1, 21).ToString();
 
     public void AdjustTrackedValue(CombatParticipantVm vm, int delta)
