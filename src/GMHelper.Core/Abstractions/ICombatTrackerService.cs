@@ -22,6 +22,8 @@ public interface ICombatTrackerService
         int? initiative,
         int? currentTrackedValue,
         string? conditionsText,
+        int? armorClass = null,
+        string? tokenNumber = null,
         CancellationToken cancellationToken = default);
 
     Task RemoveParticipantAsync(int participantId, CancellationToken cancellationToken = default);

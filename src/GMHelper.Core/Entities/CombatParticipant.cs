@@ -7,7 +7,6 @@ public class CombatParticipant
     public int Id { get; set; }
     public int CombatEncounterId { get; set; }
 
-    /// <summary>Editable short label (e.g. "1d", "a") matching the DM's physical miniature/token.</summary>
     public required string DisplayName { get; set; }
 
     public CombatParticipantSourceType SourceType { get; set; }
@@ -20,6 +19,13 @@ public class CombatParticipant
     /// retroactively change a past encounter.</summary>
     public int? CurrentTrackedValue { get; set; }
     public int? MaxTrackedValue { get; set; }
+
+    /// <summary>Snapshotted from the "RK" (Rüstungsklasse/armor class) stat field at add-time.</summary>
+    public int? ArmorClass { get; set; }
+
+    /// <summary>Snapshotted from the "TK" (Tokennummer) stat field at add-time — matches the
+    /// short label on the DM's physical miniature/token, max 2 characters.</summary>
+    public string? TokenNumber { get; set; }
 
     public string? ConditionsText { get; set; }
 

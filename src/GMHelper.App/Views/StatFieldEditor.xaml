@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:GMHelper.App"
              x:Name="Root"
              mc:Ignorable="d">
     <Grid>
@@ -23,14 +24,17 @@
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
 
-                        <TextBox Grid.Column="0" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,4,0" />
-                        <TextBox Grid.Column="1" Text="{Binding Value, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,4,0" />
+                        <TextBox Grid.Column="0" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"
+                                 IsReadOnly="{Binding IsLocked}" Margin="0,0,4,0" />
+                        <TextBox Grid.Column="1" Text="{Binding Value, UpdateSourceTrigger=PropertyChanged}"
+                                 MaxLength="{Binding ValueMaxLength}" Margin="0,0,4,0" />
                         <Button Grid.Column="2" Content="↑" Width="24" Margin="0,0,2,0"
                                 Click="MoveUpButton_Click" Tag="{Binding}" />
                         <Button Grid.Column="3" Content="↓" Width="24" Margin="0,0,2,0"
                                 Click="MoveDownButton_Click" Tag="{Binding}" />
                         <Button Grid.Column="4" Content="✕" Width="24"
-                                Click="RemoveButton_Click" Tag="{Binding}" />
+                                Click="RemoveButton_Click" Tag="{Binding}"
+                                Visibility="{Binding IsLocked, Converter={x:Static local:InverseBoolToVisibilityConverter.Instance}}" />
                     </Grid>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>

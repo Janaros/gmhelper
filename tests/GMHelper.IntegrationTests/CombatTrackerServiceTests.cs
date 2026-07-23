@@ -90,6 +90,33 @@ public class CombatTrackerServiceTests : IDisposable
     }
 
     [Fact]
+    public async Task AddMonsterParticipantAsync_SnapshotsArmorClassAndTokenNumber()
+    {
+        var monster = await _monsterService.CreateMonsterAsync("Goblin");
+        await _statFieldService.ReplaceStatFieldsAsync(StatFieldOwnerType.Monster, monster.Id, [("HP", "7"), ("RK", "15"), ("TK", "1g")]);
+        var encounter = await _sut.PrepareEncounterAsync(_campaignId);
+
+        var participant = await _sut.AddMonsterParticipantAsync(encounter.Id, monster.Id);
+
+        Assert.Equal(15, participant.ArmorClass);
+        Assert.Equal("1g", participant.TokenNumber);
+    }
+
+    [Fact]
+    public async Task UpdateParticipantAsync_PersistsArmorClassAndTokenNumber()
+    {
+        var encounter = await _sut.PrepareEncounterAsync(_campaignId);
+        var monster = await _monsterService.CreateMonsterAsync("Goblin");
+        var participant = await _sut.AddMonsterParticipantAsync(encounter.Id, monster.Id);
+
+        await _sut.UpdateParticipantAsync(participant.Id, participant.DisplayName, null, null, null, armorClass: 17, tokenNumber: "2g");
+
+        var participants = await _sut.GetParticipantsAsync(encounter.Id);
+        Assert.Equal(17, participants[0].ArmorClass);
+        Assert.Equal("2g", participants[0].TokenNumber);
+    }
+
+    [Fact]
     public async Task StartEncounterAsync_SortsByInitiativeDescendingAndSetsRoundOne()
     {
         var encounter = await _sut.PrepareEncounterAsync(_campaignId);

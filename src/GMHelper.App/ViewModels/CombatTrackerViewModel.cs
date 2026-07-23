@@ -241,6 +241,8 @@ public partial class CombatTrackerViewModel : ObservableObject
         if (e.PropertyName is nameof(CombatParticipantVm.DisplayName)
             or nameof(CombatParticipantVm.InitiativeText)
             or nameof(CombatParticipantVm.TrackedValueText)
+            or nameof(CombatParticipantVm.ArmorClassText)
+            or nameof(CombatParticipantVm.TokenNumberText)
             or nameof(CombatParticipantVm.ConditionsText))
         {
             _ = SaveParticipantAsync(vm);
@@ -251,6 +253,7 @@ public partial class CombatTrackerViewModel : ObservableObject
     {
         var initiative = int.TryParse(vm.InitiativeText, out var initiativeValue) ? initiativeValue : (int?)null;
         var trackedValue = int.TryParse(vm.TrackedValueText, out var trackedValueValue) ? trackedValueValue : (int?)null;
+        var armorClass = int.TryParse(vm.ArmorClassText, out var armorClassValue) ? armorClassValue : (int?)null;
 
         try
         {
@@ -259,7 +262,9 @@ public partial class CombatTrackerViewModel : ObservableObject
                 vm.DisplayName,
                 initiative,
                 trackedValue,
-                string.IsNullOrWhiteSpace(vm.ConditionsText) ? null : vm.ConditionsText);
+                string.IsNullOrWhiteSpace(vm.ConditionsText) ? null : vm.ConditionsText,
+                armorClass,
+                string.IsNullOrWhiteSpace(vm.TokenNumberText) ? null : vm.TokenNumberText);
         }
         catch (Exception ex)
         {

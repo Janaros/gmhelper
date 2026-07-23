@@ -16,6 +16,16 @@ namespace GMHelper.App.ViewModels;
 /// </summary>
 public partial class MonsterDatabaseViewModel : ObservableObject
 {
+    /// <summary>Stat fields every monster/NPC entry always gets, so the GM never has to
+    /// remember to add HP/RK ("Rüstungsklasse")/TK ("Tokennummer") by hand. Name is locked
+    /// (read-only, not removable) to keep them standardized; only the value is free-form.</summary>
+    private static readonly (string Name, int ValueMaxLength)[] StandardStatFields =
+    [
+        ("HP", 0),
+        ("RK", 0),
+        ("TK", 2),
+    ];
+
     private readonly IMonsterService _monsterService;
     private readonly IStatFieldService _statFieldService;
     private readonly IImageLibraryService _imageLibraryService;
@@ -65,7 +75,11 @@ public partial class MonsterDatabaseViewModel : ObservableObject
     private void Back() => BackRequested?.Invoke(this, EventArgs.Empty);
 
     [RelayCommand]
-    private void NewMonster() => SelectedMonster = null;
+    private void NewMonster()
+    {
+        SelectedMonster = null;
+        _ = LoadSelectedMonsterAsync(null); // explicit: SelectedMonster's changed-hook is a no-op if it was already null
+    }
 
     [RelayCommand]
     private async Task SaveSelectedMonsterAsync()
@@ -222,6 +236,10 @@ public partial class MonsterDatabaseViewModel : ObservableObject
         {
             EditName = string.Empty;
             EditNotes = string.Empty;
+            foreach (var (name, valueMaxLength) in StandardStatFields)
+            {
+                StatFields.Add(new StatFieldEditorItem { Name = name, IsLocked = true, ValueMaxLength = valueMaxLength });
+            }
             return;
         }
 
@@ -231,7 +249,14 @@ public partial class MonsterDatabaseViewModel : ObservableObject
         var fields = await _statFieldService.GetStatFieldsAsync(StatFieldOwnerType.Monster, monster.Id);
         foreach (var field in fields)
         {
-            StatFields.Add(new StatFieldEditorItem { Name = field.Name, Value = field.Value });
+            var standardField = Array.Find(StandardStatFields, f => string.Equals(f.Name, field.Name, StringComparison.OrdinalIgnoreCase));
+            StatFields.Add(new StatFieldEditorItem
+            {
+                Name = field.Name,
+                Value = field.Value,
+                IsLocked = standardField.Name is not null,
+                ValueMaxLength = standardField.ValueMaxLength,
+            });
         }
     }
 

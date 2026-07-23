@@ -114,6 +114,26 @@
                     </syncfusion:GridTemplateColumn.CellTemplate>
                 </syncfusion:GridTemplateColumn>
 
+                <syncfusion:GridTemplateColumn MappingName="ArmorClassText" HeaderText="RK" Width="60">
+                    <syncfusion:GridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBox Text="{Binding ArmorClassText}"
+                                     BorderThickness="0" Background="Transparent"
+                                     VerticalContentAlignment="Center" Margin="6,0" />
+                        </DataTemplate>
+                    </syncfusion:GridTemplateColumn.CellTemplate>
+                </syncfusion:GridTemplateColumn>
+
+                <syncfusion:GridTemplateColumn MappingName="TokenNumberText" HeaderText="TK" Width="60">
+                    <syncfusion:GridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBox Text="{Binding TokenNumberText}" MaxLength="2"
+                                     BorderThickness="0" Background="Transparent"
+                                     VerticalContentAlignment="Center" Margin="6,0" />
+                        </DataTemplate>
+                    </syncfusion:GridTemplateColumn.CellTemplate>
+                </syncfusion:GridTemplateColumn>
+
                 <syncfusion:GridTemplateColumn MappingName="ConditionsText" HeaderText="Zustände" Width="220">
                     <syncfusion:GridTemplateColumn.CellTemplate>
                         <DataTemplate>

@@ -10,6 +10,7 @@ public class CombatParticipantConfiguration : IEntityTypeConfiguration<CombatPar
     {
         builder.Property(p => p.DisplayName).IsRequired().HasMaxLength(200);
         builder.Property(p => p.ConditionsText).HasMaxLength(2000);
+        builder.Property(p => p.TokenNumber).HasMaxLength(2);
 
         builder.HasIndex(p => p.CombatEncounterId);
 

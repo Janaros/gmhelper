@@ -31,7 +31,7 @@ public partial class StatFieldEditor : UserControl
 
     private void RemoveButton_Click(object sender, RoutedEventArgs e)
     {
-        if (sender is FrameworkElement { Tag: StatFieldEditorItem item } && ItemsSource is not null)
+        if (sender is FrameworkElement { Tag: StatFieldEditorItem item } && ItemsSource is not null && !item.IsLocked)
         {
             ItemsSource.Remove(item);
         }

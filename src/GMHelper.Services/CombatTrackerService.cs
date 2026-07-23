@@ -45,7 +45,9 @@ public class CombatTrackerService : ICombatTrackerService
         var sortOrder = 0;
         foreach (var player in activePlayers)
         {
-            var hp = await TryGetHpAsync(db, StatFieldOwnerType.Player, player.Id, cancellationToken);
+            var hp = await TryGetIntStatFieldAsync(db, StatFieldOwnerType.Player, player.Id, "HP", cancellationToken);
+            var armorClass = await TryGetIntStatFieldAsync(db, StatFieldOwnerType.Player, player.Id, "RK", cancellationToken);
+            var tokenNumber = await TryGetStatFieldAsync(db, StatFieldOwnerType.Player, player.Id, "TK", cancellationToken);
 
             db.CombatParticipants.Add(new CombatParticipant
             {
@@ -56,6 +58,8 @@ public class CombatTrackerService : ICombatTrackerService
                 Initiative = player.Initiative,
                 CurrentTrackedValue = hp,
                 MaxTrackedValue = hp,
+                ArmorClass = armorClass,
+                TokenNumber = tokenNumber,
                 SortOrder = sortOrder++,
             });
         }
@@ -90,7 +94,9 @@ public class CombatTrackerService : ICombatTrackerService
             .Select(p => (int?)p.SortOrder)
             .MaxAsync(cancellationToken) ?? -1;
 
-        var hp = await TryGetHpAsync(db, StatFieldOwnerType.Monster, monsterId, cancellationToken);
+        var hp = await TryGetIntStatFieldAsync(db, StatFieldOwnerType.Monster, monsterId, "HP", cancellationToken);
+        var armorClass = await TryGetIntStatFieldAsync(db, StatFieldOwnerType.Monster, monsterId, "RK", cancellationToken);
+        var tokenNumber = await TryGetStatFieldAsync(db, StatFieldOwnerType.Monster, monsterId, "TK", cancellationToken);
 
         var participant = new CombatParticipant
         {
@@ -100,6 +106,8 @@ public class CombatTrackerService : ICombatTrackerService
             MonsterId = monsterId,
             CurrentTrackedValue = hp,
             MaxTrackedValue = hp,
+            ArmorClass = armorClass,
+            TokenNumber = tokenNumber,
             SortOrder = maxSortOrder + 1,
         };
 
@@ -115,6 +123,8 @@ public class CombatTrackerService : ICombatTrackerService
         int? initiative,
         int? currentTrackedValue,
         string? conditionsText,
+        int? armorClass = null,
+        string? tokenNumber = null,
         CancellationToken cancellationToken = default)
     {
         await using var db = await _dbContextFactory.CreateDbContextAsync(cancellationToken);
@@ -129,6 +139,8 @@ public class CombatTrackerService : ICombatTrackerService
         participant.Initiative = initiative;
         participant.CurrentTrackedValue = currentTrackedValue;
         participant.ConditionsText = conditionsText;
+        participant.ArmorClass = armorClass;
+        participant.TokenNumber = tokenNumber;
 
         await db.SaveChangesAsync(cancellationToken);
     }
@@ -217,14 +229,20 @@ public class CombatTrackerService : ICombatTrackerService
         await db.SaveChangesAsync(cancellationToken);
     }
 
-    /// <summary>Looks up a stat field named exactly "HP" (case-insensitive) and parses it as an
-    /// integer, so a participant's current/max tracked value can be pre-filled on add.</summary>
-    private static async Task<int?> TryGetHpAsync(AppDbContext db, StatFieldOwnerType ownerType, int ownerId, CancellationToken cancellationToken)
+    /// <summary>Looks up a stat field by exact name (e.g. "HP", "RK", "TK"), so a participant's
+    /// snapshot values can be pre-filled from the Player/Monster template on add.</summary>
+    private static async Task<string?> TryGetStatFieldAsync(AppDbContext db, StatFieldOwnerType ownerType, int ownerId, string fieldName, CancellationToken cancellationToken)
     {
-        var hpStatField = await db.StatFields
-            .Where(s => s.OwnerType == ownerType && s.OwnerId == ownerId && s.Name == "HP")
+        var statField = await db.StatFields
+            .Where(s => s.OwnerType == ownerType && s.OwnerId == ownerId && s.Name == fieldName)
             .FirstOrDefaultAsync(cancellationToken);
 
-        return hpStatField is not null && int.TryParse(hpStatField.Value, out var parsedHp) ? parsedHp : null;
+        return statField?.Value;
+    }
+
+    private static async Task<int?> TryGetIntStatFieldAsync(AppDbContext db, StatFieldOwnerType ownerType, int ownerId, string fieldName, CancellationToken cancellationToken)
+    {
+        var value = await TryGetStatFieldAsync(db, ownerType, ownerId, fieldName, cancellationToken);
+        return value is not null && int.TryParse(value, out var parsed) ? parsed : null;
     }
 }

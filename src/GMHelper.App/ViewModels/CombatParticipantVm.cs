@@ -28,6 +28,12 @@ public partial class CombatParticipantVm : ObservableObject
     private int? _maxTrackedValue;
 
     [ObservableProperty]
+    private string _armorClassText;
+
+    [ObservableProperty]
+    private string _tokenNumberText;
+
+    [ObservableProperty]
     private string _conditionsText;
 
     [ObservableProperty]
@@ -41,6 +47,8 @@ public partial class CombatParticipantVm : ObservableObject
         _initiativeText = model.Initiative?.ToString() ?? string.Empty;
         _trackedValueText = model.CurrentTrackedValue?.ToString() ?? string.Empty;
         _maxTrackedValue = model.MaxTrackedValue;
+        _armorClassText = model.ArmorClass?.ToString() ?? string.Empty;
+        _tokenNumberText = model.TokenNumber ?? string.Empty;
         _conditionsText = model.ConditionsText ?? string.Empty;
     }
 }
