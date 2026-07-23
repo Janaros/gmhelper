@@ -18,6 +18,7 @@ public class AppDbContext : DbContext
     public DbSet<CombatEncounter> CombatEncounters => Set<CombatEncounter>();
     public DbSet<CombatParticipant> CombatParticipants => Set<CombatParticipant>();
     public DbSet<SessionNote> SessionNotes => Set<SessionNote>();
+    public DbSet<PdfJumpMarker> PdfJumpMarkers => Set<PdfJumpMarker>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

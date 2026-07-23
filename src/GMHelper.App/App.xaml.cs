@@ -71,6 +71,8 @@ public partial class App : Application
 
         services.AddSingleton<ICampaignService, CampaignService>();
         services.AddSingleton<IPdfLibraryService, PdfLibraryService>();
+        services.AddSingleton<IPdfJumpMarkerService, PdfJumpMarkerService>();
+        services.AddSingleton<IPdfTocGeneratorService, PdfTocGeneratorService>();
         services.AddSingleton<IImageLibraryService, ImageLibraryService>();
         services.AddSingleton<IPlayerService, PlayerService>();
         services.AddSingleton<IStatFieldService, StatFieldService>();

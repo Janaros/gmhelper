@@ -11,9 +11,12 @@ public partial class PdfLibraryViewModel : ObservableObject
 {
     private readonly Campaign _campaign;
     private readonly IPdfLibraryService _pdfLibraryService;
+    private readonly IPdfJumpMarkerService _pdfJumpMarkerService;
+    private readonly IPdfTocGeneratorService _pdfTocGeneratorService;
     private readonly ILogger<PdfLibraryViewModel> _logger;
 
     public ObservableCollection<PdfDocument> Pdfs { get; } = new();
+    public ObservableCollection<PdfJumpMarker> JumpMarkers { get; } = new();
 
     [ObservableProperty]
     private PdfDocument? _selectedPdf;
@@ -21,16 +24,107 @@ public partial class PdfLibraryViewModel : ObservableObject
     [ObservableProperty]
     private string? _statusMessage;
 
-    public PdfLibraryViewModel(Campaign campaign, IPdfLibraryService pdfLibraryService, ILogger<PdfLibraryViewModel> logger)
+    public PdfLibraryViewModel(
+        Campaign campaign,
+        IPdfLibraryService pdfLibraryService,
+        IPdfJumpMarkerService pdfJumpMarkerService,
+        IPdfTocGeneratorService pdfTocGeneratorService,
+        ILogger<PdfLibraryViewModel> logger)
     {
         _campaign = campaign;
         _pdfLibraryService = pdfLibraryService;
+        _pdfJumpMarkerService = pdfJumpMarkerService;
+        _pdfTocGeneratorService = pdfTocGeneratorService;
         _logger = logger;
     }
 
     public async Task InitializeAsync()
     {
         await ReloadAsync();
+    }
+
+    partial void OnSelectedPdfChanged(PdfDocument? value)
+    {
+        _ = ReloadJumpMarkersAsync(value);
+    }
+
+    private async Task ReloadJumpMarkersAsync(PdfDocument? pdf)
+    {
+        JumpMarkers.Clear();
+
+        if (pdf is null)
+        {
+            return;
+        }
+
+        var markers = await _pdfJumpMarkerService.GetJumpMarkersAsync(pdf.Id);
+        foreach (var marker in markers)
+        {
+            JumpMarkers.Add(marker);
+        }
+    }
+
+    public async Task AddJumpMarkerAsync(string title, int pageNumber)
+    {
+        if (SelectedPdf is null || string.IsNullOrWhiteSpace(title))
+        {
+            return;
+        }
+
+        try
+        {
+            await _pdfJumpMarkerService.AddJumpMarkerAsync(SelectedPdf.Id, title.Trim(), pageNumber);
+            await ReloadJumpMarkersAsync(SelectedPdf);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to add jump marker for PDF {PdfDocumentId}", SelectedPdf.Id);
+            StatusMessage = $"Fehler beim Anlegen der Sprungmarke: {ex.Message}";
+        }
+    }
+
+    public async Task DeleteJumpMarkerAsync(PdfJumpMarker marker)
+    {
+        try
+        {
+            await _pdfJumpMarkerService.DeleteJumpMarkerAsync(marker.Id);
+            await ReloadJumpMarkersAsync(SelectedPdf);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to delete jump marker {JumpMarkerId}", marker.Id);
+            StatusMessage = $"Fehler beim Löschen der Sprungmarke: {ex.Message}";
+        }
+    }
+
+    /// <summary>Scans the currently selected PDF for numbered headings and writes them as a real
+    /// PDF outline (see <see cref="IPdfTocGeneratorService"/>), so the viewer's native bookmark
+    /// panel shows something useful. Backs up first via <see cref="PrepareSaveAsync"/> since this
+    /// mutates the file in place, same as the manual "Speichern" flow.</summary>
+    public async Task GenerateTocAsync()
+    {
+        if (SelectedPdf is null)
+        {
+            return;
+        }
+
+        if (!await PrepareSaveAsync())
+        {
+            return;
+        }
+
+        try
+        {
+            var count = await _pdfTocGeneratorService.GenerateOutlineAsync(_pdfLibraryService.GetAbsoluteFilePath(SelectedPdf));
+            StatusMessage = count == 0
+                ? "Keine nummerierten Überschriften gefunden."
+                : $"{count} Lesezeichen erzeugt.";
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to generate PDF outline for {PdfDocumentId}", SelectedPdf.Id);
+            StatusMessage = $"Fehler beim Erzeugen des Inhaltsverzeichnisses: {ex.Message}";
+        }
     }
 
     public async Task AddPdfAsync(string sourceFilePath)

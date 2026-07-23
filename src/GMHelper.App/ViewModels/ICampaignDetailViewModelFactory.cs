@@ -14,6 +14,8 @@ public interface ICampaignDetailViewModelFactory
 public class CampaignDetailViewModelFactory : ICampaignDetailViewModelFactory
 {
     private readonly IPdfLibraryService _pdfLibraryService;
+    private readonly IPdfJumpMarkerService _pdfJumpMarkerService;
+    private readonly IPdfTocGeneratorService _pdfTocGeneratorService;
     private readonly IImageLibraryService _imageLibraryService;
     private readonly IPlayerService _playerService;
     private readonly IStatFieldService _statFieldService;
@@ -27,6 +29,8 @@ public class CampaignDetailViewModelFactory : ICampaignDetailViewModelFactory
 
     public CampaignDetailViewModelFactory(
         IPdfLibraryService pdfLibraryService,
+        IPdfJumpMarkerService pdfJumpMarkerService,
+        IPdfTocGeneratorService pdfTocGeneratorService,
         IImageLibraryService imageLibraryService,
         IPlayerService playerService,
         IStatFieldService statFieldService,
@@ -39,6 +43,8 @@ public class CampaignDetailViewModelFactory : ICampaignDetailViewModelFactory
         ILoggerFactory loggerFactory)
     {
         _pdfLibraryService = pdfLibraryService;
+        _pdfJumpMarkerService = pdfJumpMarkerService;
+        _pdfTocGeneratorService = pdfTocGeneratorService;
         _imageLibraryService = imageLibraryService;
         _playerService = playerService;
         _statFieldService = statFieldService;
@@ -56,6 +62,8 @@ public class CampaignDetailViewModelFactory : ICampaignDetailViewModelFactory
         var pdfLibrary = new PdfLibraryViewModel(
             campaign,
             _pdfLibraryService,
+            _pdfJumpMarkerService,
+            _pdfTocGeneratorService,
             _loggerFactory.CreateLogger<PdfLibraryViewModel>());
 
         var imageLibrary = new ImageLibraryViewModel(

@@ -204,6 +204,62 @@ public partial class PdfLibraryView : UserControl
         PdfViewer.PageRedactor.ApplyRedaction();
     }
 
+    private async void GenerateTocButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (ViewModel is null || _loadedPdf is null)
+        {
+            return;
+        }
+
+        var absolutePath = ViewModel.GetAbsoluteFilePath(_loadedPdf);
+        PdfViewer.Unload();
+
+        await ViewModel.GenerateTocAsync();
+
+        PdfViewer.Load(absolutePath);
+    }
+
+    private async void AddJumpMarkerButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (ViewModel is null || _loadedPdf is null)
+        {
+            return;
+        }
+
+        var title = NewJumpMarkerTitleTextBox.Text;
+        if (string.IsNullOrWhiteSpace(title))
+        {
+            return;
+        }
+
+        await ViewModel.AddJumpMarkerAsync(title, PdfViewer.CurrentPage);
+        NewJumpMarkerTitleTextBox.Text = string.Empty;
+    }
+
+    private void JumpMarkerButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement { Tag: PdfJumpMarker marker })
+        {
+            PdfViewer.GotoPage(marker.PageNumber);
+        }
+    }
+
+    private async void RemoveJumpMarkerButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (ViewModel is not null && sender is FrameworkElement { Tag: PdfJumpMarker marker })
+        {
+            await ViewModel.DeleteJumpMarkerAsync(marker);
+        }
+    }
+
+    private void ToggleJumpMarkersPanelButton_Click(object sender, RoutedEventArgs e)
+    {
+        var collapsed = JumpMarkersPanel.Visibility == Visibility.Visible;
+        JumpMarkersPanel.Visibility = collapsed ? Visibility.Collapsed : Visibility.Visible;
+        JumpMarkersColumn.Width = collapsed ? new GridLength(0) : new GridLength(220);
+        ToggleJumpMarkersPanelButton.Content = collapsed ? "«" : "»";
+    }
+
     private void ResetEditMode()
     {
         SetEditMode(EditMode.None);

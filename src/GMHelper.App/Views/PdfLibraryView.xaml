@@ -104,6 +104,8 @@
             <ToggleButton x:Name="ToggleFreeTextButton" Content="🔤 Block hinzufügen" Click="ToggleFreeTextButton_Click" Padding="8,4" Margin="4,0,0,0" />
             <ToggleButton x:Name="ToggleRedactButton" Content="⛔ Text ersetzen" Click="ToggleRedactButton_Click" Padding="8,4" Margin="4,0,0,0" />
             <Button Content="Speichern" Margin="8,0,0,0" Click="SaveButton_Click" Padding="8,4" />
+            <Button Content="Inhaltsverzeichnis erzeugen" Margin="8,0,0,0" Click="GenerateTocButton_Click" Padding="8,4"
+                    ToolTip="Scannt das PDF nach nummerierten Überschriften und legt echte PDF-Lesezeichen an" />
         </StackPanel>
 
         <StackPanel Grid.Row="3" Orientation="Horizontal" Margin="0,0,0,4"
@@ -152,6 +154,55 @@
             <Button Content="Anwenden" Margin="16,0,0,0" Padding="8,4" Click="ApplyRedactionButton_Click" />
         </StackPanel>
 
-        <syncfusion:PdfViewerControl x:Name="PdfViewer" Grid.Row="4" />
+        <Grid Grid.Row="4">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition x:Name="JumpMarkersColumn" Width="220" />
+            </Grid.ColumnDefinitions>
+
+            <syncfusion:PdfViewerControl x:Name="PdfViewer" Grid.Column="0" />
+
+            <Button x:Name="ToggleJumpMarkersPanelButton" Grid.Column="1" Content="»" Width="18"
+                    Padding="0" Margin="2,0" Click="ToggleJumpMarkersPanelButton_Click"
+                    ToolTip="Sprungmarken-Panel ein-/ausblenden" />
+
+            <Grid x:Name="JumpMarkersPanel" Grid.Column="2" Margin="8,0,0,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0" Text="Sprungmarken" FontWeight="Bold" Margin="0,0,0,4" />
+
+                <DockPanel Grid.Row="1" Margin="0,0,0,4">
+                    <Button DockPanel.Dock="Right" Content="+ Hier" Margin="4,0,0,0" Click="AddJumpMarkerButton_Click" />
+                    <TextBox x:Name="NewJumpMarkerTitleTextBox" ToolTip="Name der Sprungmarke für die aktuell offene Seite" />
+                </DockPanel>
+
+                <ListBox Grid.Row="2" ItemsSource="{Binding JumpMarkers}" BorderThickness="0" Background="Transparent">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Margin="0,0,0,2">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <Button Grid.Column="0" HorizontalContentAlignment="Left" Click="JumpMarkerButton_Click" Tag="{Binding}">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="{Binding Title}" TextTrimming="CharacterEllipsis" />
+                                        <TextBlock Text="{Binding PageNumber, StringFormat=' (S. {0})'}" Opacity="0.6" />
+                                    </StackPanel>
+                                </Button>
+                                <Button Grid.Column="1" Content="✕" Width="24" Margin="2,0,0,0"
+                                        Click="RemoveJumpMarkerButton_Click" Tag="{Binding}" />
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </Grid>
+        </Grid>
     </Grid>
 </UserControl>
