@@ -19,6 +19,9 @@
         <DataTemplate DataType="{x:Type vm:MonsterDatabaseViewModel}">
             <views:MonsterDatabaseView />
         </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:HerbalismViewModel}">
+            <views:HerbalismView />
+        </DataTemplate>
 
         <Style x:Key="NavRailItemStyle" TargetType="ToggleButton">
             <Setter Property="HorizontalContentAlignment" Value="Left" />
@@ -79,6 +82,11 @@
                                   Style="{StaticResource NavRailItemStyle}"
                                   IsChecked="{Binding IsMonsterDatabaseSection, Mode=OneWay}"
                                   Command="{Binding NavigateToMonsterDatabaseCommand}" />
+
+                    <ToggleButton Content="🌿 Kräuterkunde"
+                                  Style="{StaticResource NavRailItemStyle}"
+                                  IsChecked="{Binding IsHerbalismSection, Mode=OneWay}"
+                                  Command="{Binding NavigateToHerbalismCommand}" />
                 </StackPanel>
             </DockPanel>
         </Border>

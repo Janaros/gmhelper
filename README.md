@@ -1,6 +1,6 @@
 # GMHelper
 
-WPF-Desktop-Anwendung für Game Master, die eine komplette Tabletop-RPG-Session (D&D 5e und andere Systeme) verwaltet: Kampagnen mit verknüpften PDFs (inkl. Stift-Annotationen direkt im PDF) und Bildern, ein spieler-sicheres Zweitbildschirm-Fenster, ein Spieler-Roster mit Initiative, eine systemunabhängige Monster-Datenbank und Markdown-Session-Notizen.
+WPF-Desktop-Anwendung für Game Master, die eine komplette Tabletop-RPG-Session (D&D 5e und andere Systeme) verwaltet: Kampagnen mit verknüpften PDFs (inkl. Stift-Annotationen direkt im PDF) und Bildern, ein spieler-sicheres Zweitbildschirm-Fenster, ein Spieler-Roster mit Initiative, eine systemunabhängige Monster-Datenbank, eine Kräuterkunde-Suche mit Sammelgebieten und Zutatentabellen sowie Markdown-Session-Notizen.
 
 ## Funktionsumfang
 
@@ -10,6 +10,7 @@ WPF-Desktop-Anwendung für Game Master, die eine komplette Tabletop-RPG-Session 
 - **Spieler-Roster**: Flexible, systemunabhängige Stat-Felder pro Spieler, Initiative als festes Feld.
 - **Monster-Datenbank**: Globale, systemunabhängige Monster mit manuellem CRUD sowie JSON/CSV-Bulk-Import und -Export.
 - **Kampf-Tracker**: Spieler und Monster-Instanzen (mit Auto-Nummerierung und editierbaren Kürzeln) in einen Encounter ziehen, Initiative auswürfeln (W20) oder eintragen, HP-Tracking, freie Zustands-Tags, Rundenzähler, "Nächster Zug".
+- **Kräuterkunde**: Sammelgebiete der Schwertküste mit je eigener Fundtabelle für Trank- und Zauberzutaten (Art, Seltenheit, Wirkung, Wert), durchsuch- und filterbar. Der Sammelwurf würfelt Weisheit (Überleben) gegen den SG des Gebiets — je 5 Punkte über dem SG gibt es eine Zutat mehr und schaltet seltenere frei, das Kräuterkundeset gibt Vorteil. Gebiete und Zutaten sind frei editierbar; die Schwertküsten-Startdaten werden beim ersten Öffnen angelegt.
 - **Session-Notizen**: Markdown mit Live-Vorschau, chronologisch pro Kampagne.
 
 ## Installation

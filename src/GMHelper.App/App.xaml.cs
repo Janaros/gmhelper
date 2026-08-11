@@ -82,10 +82,17 @@ public partial class App : Application
         services.AddSingleton<ICombatTrackerService, CombatTrackerService>();
         services.AddSingleton<ISessionNotesService, SessionNotesService>();
         services.AddSingleton<ICampaignExportService, CampaignExportService>();
+        services.AddSingleton<IDiceRoller, SystemDiceRoller>();
+        services.AddSingleton<IHerbalismRegionService, HerbalismRegionService>();
+        services.AddSingleton<IHerbalismIngredientService, HerbalismIngredientService>();
+        services.AddSingleton<IHerbalismHarvestService, HerbalismHarvestService>();
+        services.AddSingleton<IHerbalismSeeder, HerbalismSeeder>();
 
         services.AddSingleton<ViewModels.ICampaignDetailViewModelFactory, ViewModels.CampaignDetailViewModelFactory>();
         services.AddSingleton<ViewModels.CampaignListViewModel>();
         services.AddSingleton<ViewModels.MonsterDatabaseViewModel>();
+        services.AddSingleton<ViewModels.HerbalismHarvestViewModel>();
+        services.AddSingleton<ViewModels.HerbalismViewModel>();
         services.AddSingleton<ViewModels.ShellViewModel>();
         services.AddSingleton<MainWindow>();
 

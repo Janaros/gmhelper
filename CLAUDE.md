@@ -1,6 +1,6 @@
 # GMHelper
 
-WPF-Desktop-Anwendung für Game Master, die eine komplette Tabletop-RPG-Session (D&D 5e und andere Systeme) verwaltet: Kampagnen mit verknüpften PDFs (inkl. Stift-Annotationen direkt im PDF) und Bildern, ein spieler-sicheres Zweitbildschirm-Fenster, Spieler-Roster mit Initiative, eine systemunabhängige Monster-Datenbank und Markdown-Session-Notizen.
+WPF-Desktop-Anwendung für Game Master, die eine komplette Tabletop-RPG-Session (D&D 5e und andere Systeme) verwaltet: Kampagnen mit verknüpften PDFs (inkl. Stift-Annotationen direkt im PDF) und Bildern, ein spieler-sicheres Zweitbildschirm-Fenster, Spieler-Roster mit Initiative, eine systemunabhängige Monster-Datenbank, eine Kräuterkunde-Suche mit Sammelgebieten und Zutatentabellen sowie Markdown-Session-Notizen.
 
 Der vollständige Architektur- und Phasenplan liegt (bis zur Umsetzung aller Phasen) als Referenz in der ursprünglichen Planungs-Session; die verbindlichen Konventionen unten gelten ab sofort für jede Änderung an diesem Repo.
 

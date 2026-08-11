@@ -19,6 +19,8 @@ public class AppDbContext : DbContext
     public DbSet<CombatParticipant> CombatParticipants => Set<CombatParticipant>();
     public DbSet<SessionNote> SessionNotes => Set<SessionNote>();
     public DbSet<PdfJumpMarker> PdfJumpMarkers => Set<PdfJumpMarker>();
+    public DbSet<HerbalismRegion> HerbalismRegions => Set<HerbalismRegion>();
+    public DbSet<HerbalismIngredient> HerbalismIngredients => Set<HerbalismIngredient>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
