@@ -8,9 +8,15 @@
              mc:Ignorable="d">
     <UserControl.Resources>
         <SolidColorBrush x:Key="CurrentTurnBrush" Color="#FFEFD98A" />
+
+        <!-- Wie GridCellTextBoxStyle, zusätzlich mit dem Ein-Klick-Fokus-Handler: siehe
+             CellTextBox_PreviewMouseLeftButtonDown im Code-Behind. -->
+        <Style x:Key="CombatCellTextBoxStyle" TargetType="TextBox" BasedOn="{StaticResource GridCellTextBoxStyle}">
+            <EventSetter Event="PreviewMouseLeftButtonDown" Handler="CellTextBox_PreviewMouseLeftButtonDown" />
+        </Style>
     </UserControl.Resources>
 
-    <Grid Margin="8">
+    <Grid Margin="{StaticResource SubViewMargin}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
@@ -18,7 +24,7 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,8">
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,12">
             <Button Content="Kampf vorbereiten"
                     Command="{Binding PrepareEncounterCommand}"
                     Visibility="{Binding HasActiveEncounter, Converter={x:Static local:InverseBoolToVisibilityConverter.Instance}}" />
@@ -30,6 +36,7 @@
             <TextBlock Text="{Binding CurrentRound, StringFormat='Runde {0}'}"
                        VerticalAlignment="Center" FontWeight="Bold" Margin="0,0,12,0"
                        Visibility="{Binding HasStarted, Converter={x:Static local:BoolToVisibilityConverter.Instance}}" />
+
             <Button Content="Nächster"
                     Command="{Binding NextTurnCommand}"
                     Visibility="{Binding HasStarted, Converter={x:Static local:BoolToVisibilityConverter.Instance}}" />
@@ -46,7 +53,7 @@
                     Visibility="{Binding HasActiveEncounter, Converter={x:Static local:BoolToVisibilityConverter.Instance}}" />
         </StackPanel>
 
-        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,8"
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,12"
                     Visibility="{Binding HasActiveEncounter, Converter={x:Static local:BoolToVisibilityConverter.Instance}}">
             <ComboBox Width="220" ItemsSource="{Binding AvailableMonsters}" SelectedItem="{Binding SelectedMonsterToAdd}" DisplayMemberPath="Name" />
             <Button Content="Monster hinzufügen" Margin="8,0,0,0" Command="{Binding AddMonsterCommand}" />
@@ -54,9 +61,7 @@
 
         <TextBlock Grid.Row="2"
                    Text="{Binding StatusMessage}"
-                   Foreground="Red"
-                   TextWrapping="Wrap"
-                   Margin="0,0,0,8"
+                   Style="{StaticResource StatusTextStyle}"
                    Visibility="{Binding StatusMessage, Converter={x:Static local:NullToVisibilityConverter.Instance}}" />
 
         <syncfusion:SfDataGrid Grid.Row="3"
@@ -77,13 +82,13 @@
                 </Style>
             </syncfusion:SfDataGrid.RowStyle>
             <syncfusion:SfDataGrid.Columns>
-                <syncfusion:GridTemplateColumn MappingName="DisplayName" HeaderText="Name" Width="150">
+                <syncfusion:GridTemplateColumn MappingName="DisplayName" HeaderText="Name" Width="160">
                     <syncfusion:GridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBox Text="{Binding DisplayName}"
                                      IsReadOnly="{Binding IsMonster, Converter={x:Static local:InverseBoolConverter.Instance}}"
-                                     BorderThickness="0" Background="Transparent"
-                                     VerticalContentAlignment="Center" Margin="6,0" />
+                                     Style="{StaticResource CombatCellTextBoxStyle}"
+                                     Margin="8,0" />
                         </DataTemplate>
                     </syncfusion:GridTemplateColumn.CellTemplate>
                 </syncfusion:GridTemplateColumn>
@@ -91,22 +96,24 @@
                 <syncfusion:GridTemplateColumn MappingName="InitiativeText" HeaderText="Initiative" Width="120">
                     <syncfusion:GridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="6,0">
-                                <TextBox Text="{Binding InitiativeText}" Width="40" BorderThickness="0" Background="Transparent" />
-                                <Button Content="🎲" Width="28" Margin="4,0,0,0" Click="RollInitiativeButton_Click" Tag="{Binding}" ToolTip="W20 würfeln" />
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="8,0">
+                                <TextBox Text="{Binding InitiativeText}" Width="40" Style="{StaticResource CombatCellTextBoxStyle}" />
+                                <Button Content="🎲" Style="{StaticResource IconButtonStyle}" Margin="6,0,0,0"
+                                        Click="RollInitiativeButton_Click" Tag="{Binding}" ToolTip="W20 würfeln" />
                             </StackPanel>
                         </DataTemplate>
                     </syncfusion:GridTemplateColumn.CellTemplate>
                 </syncfusion:GridTemplateColumn>
 
-                <syncfusion:GridTemplateColumn MappingName="TrackedValueText" HeaderText="HP" Width="170">
+                <syncfusion:GridTemplateColumn MappingName="TrackedValueText" HeaderText="HP" Width="190">
                     <syncfusion:GridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="6,0">
-                                <Button Content="−" Width="24" Click="DecrementHpButton_Click" Tag="{Binding}" />
-                                <TextBox Text="{Binding TrackedValueText}" Width="40" Margin="2,0" BorderThickness="0" Background="Transparent" />
-                                <Button Content="+" Width="24" Click="IncrementHpButton_Click" Tag="{Binding}" />
-                                <TextBlock Margin="6,0,0,0" VerticalAlignment="Center"
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="8,0">
+                                <Button Content="−" Style="{StaticResource IconButtonStyle}" Click="DecrementHpButton_Click" Tag="{Binding}" />
+                                <TextBox Text="{Binding TrackedValueText}" Width="40" Margin="4,0"
+                                         TextAlignment="Center" Style="{StaticResource CombatCellTextBoxStyle}" />
+                                <Button Content="+" Style="{StaticResource IconButtonStyle}" Click="IncrementHpButton_Click" Tag="{Binding}" />
+                                <TextBlock Margin="8,0,0,0" VerticalAlignment="Center"
                                            Text="{Binding MaxTrackedValue, StringFormat='/ {0}'}"
                                            Visibility="{Binding MaxTrackedValue, Converter={x:Static local:NullToVisibilityConverter.Instance}}" />
                             </StackPanel>
@@ -118,8 +125,8 @@
                     <syncfusion:GridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBox Text="{Binding ArmorClassText}"
-                                     BorderThickness="0" Background="Transparent"
-                                     VerticalContentAlignment="Center" Margin="6,0" />
+                                     Style="{StaticResource CombatCellTextBoxStyle}"
+                                     TextAlignment="Center" Margin="8,0" />
                         </DataTemplate>
                     </syncfusion:GridTemplateColumn.CellTemplate>
                 </syncfusion:GridTemplateColumn>
@@ -128,8 +135,8 @@
                     <syncfusion:GridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBox Text="{Binding TokenNumberText}" MaxLength="2"
-                                     BorderThickness="0" Background="Transparent"
-                                     VerticalContentAlignment="Center" Margin="6,0" />
+                                     Style="{StaticResource CombatCellTextBoxStyle}"
+                                     TextAlignment="Center" Margin="8,0" />
                         </DataTemplate>
                     </syncfusion:GridTemplateColumn.CellTemplate>
                 </syncfusion:GridTemplateColumn>
@@ -139,16 +146,17 @@
                         <DataTemplate>
                             <TextBox Text="{Binding ConditionsText}"
                                      ToolTip="Zustände (frei, z.B. vergiftet)"
-                                     BorderThickness="0" Background="Transparent"
-                                     VerticalContentAlignment="Center" Margin="6,0" />
+                                     Style="{StaticResource CombatCellTextBoxStyle}"
+                                     Margin="8,0" />
                         </DataTemplate>
                     </syncfusion:GridTemplateColumn.CellTemplate>
                 </syncfusion:GridTemplateColumn>
 
-                <syncfusion:GridTemplateColumn MappingName="Id" HeaderText="" Width="50" AllowResizing="False">
+                <syncfusion:GridTemplateColumn MappingName="Id" HeaderText="" Width="56" AllowResizing="False">
                     <syncfusion:GridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Button Content="✕" Width="24" Click="RemoveParticipantButton_Click" Tag="{Binding}" />
+                            <Button Content="✕" Style="{StaticResource IconButtonStyle}"
+                                    Click="RemoveParticipantButton_Click" Tag="{Binding}" />
                         </DataTemplate>
                     </syncfusion:GridTemplateColumn.CellTemplate>
                 </syncfusion:GridTemplateColumn>

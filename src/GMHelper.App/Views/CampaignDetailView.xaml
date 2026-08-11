@@ -7,24 +7,24 @@
              xmlns:tools="clr-namespace:Syncfusion.Windows.Tools.Controls;assembly=Syncfusion.Tools.WPF"
              xmlns:local="clr-namespace:GMHelper.App"
              mc:Ignorable="d">
-    <Grid Margin="12">
+    <Grid Margin="{StaticResource ViewMargin}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="0,0,0,4">
+        <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="0,0,0,16">
             <Button Content="&lt; Zurück" Command="{Binding BackCommand}" />
-            <TextBlock Text="{Binding Campaign.Name}" FontSize="18" FontWeight="Bold" Margin="12,0,0,0" VerticalAlignment="Center" />
+            <TextBlock Text="{Binding Campaign.Name}" Style="{StaticResource PageTitleTextStyle}" Margin="12,0,0,0" />
             <Button Content="Backup exportieren" Margin="24,0,0,0" Click="ExportBackupButton_Click" />
         </StackPanel>
 
         <TextBlock Grid.Row="1"
                    Text="{Binding StatusMessage}"
-                   Foreground="Gray"
+                   Foreground="{StaticResource MutedTextBrush}"
                    TextWrapping="Wrap"
-                   Margin="0,0,0,8"
+                   Margin="0,0,0,12"
                    Visibility="{Binding StatusMessage, Converter={x:Static local:NullToVisibilityConverter.Instance}}" />
 
         <tools:TabControlExt Grid.Row="2">

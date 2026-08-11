@@ -61,6 +61,30 @@ EF-Core-Migrationen (Startprojekt ist `GMHelper.App`, da dort die Design-Time-Fa
 dotnet ef migrations add <Name> --project src/GMHelper.Data --startup-project src/GMHelper.App --output-dir Migrations
 ```
 
+## UI-Konventionen: Abstände und Styles
+
+Alle Abstands-/Größen-Defaults liegen zentral in `App.xaml` (`Application.Resources`), damit die
+Ansichten nicht jede für sich 2/4/6/8/10/12 px erfinden — genau das ließ die App vorher unruhig
+wirken. Views setzen deshalb **keine eigenen** `Padding`-Werte auf Buttons/TextBoxen mehr.
+
+- **Abstandsskala** (als `Thickness`-Ressourcen): `ViewMargin` (16) für Ansichten direkt im Shell,
+  `SubViewMargin` (12) für Ansichten in einem Tab (der Tab-Rahmen rückt sie schon ein),
+  `GutterMargin` zwischen nebeneinander liegenden Spalten, `FieldMargin` unter einem Eingabefeld.
+  Abstände zwischen Buttons einer Werkzeugleiste: `Margin="8,0,0,0"`, bei Gruppenwechsel `16`.
+- **Implizite Styles** für `Button`/`ToggleButton`/`TextBox`/`ComboBox`/`ListBoxItem` setzen nur
+  Abstand und Mindesthöhe, keine Templates oder Farben — das Aussehen bleibt Sache des
+  Syncfusion-Themes. Sie stehen bewusst direkt in `Application.Resources` (nicht in einem
+  `MergedDictionary`), weil lokale Einträge gegen Theme-Dictionaries gewinnen.
+- **Benannte Styles** statt wiederholter Inline-Formatierung: `IconButtonStyle` (quadratische
+  Symbol-Buttons, sonst schneidet das Standard-Padding den Glyph ab), `GridCellTextBoxStyle`
+  (TextBox in einer Tabellenzelle), `PageTitleTextStyle`, `SectionHeaderTextStyle`,
+  `FieldLabelTextStyle`, `HintTextStyle`, `StatusTextStyle`, `CardBorderStyle`.
+- **Ein Klick statt zwei in Tabellen**: `SfDataGrid` beansprucht den ersten Linksklick in einer
+  Zeile für die eigene Zellauswahl, eine `TextBox` in einer `GridTemplateColumn` bekäme den Fokus
+  also erst beim zweiten Klick. `CombatTrackerView` fängt das über
+  `CellTextBox_PreviewMouseLeftButtonDown` ab (Fokus + Cursorposition setzen, Klick als behandelt
+  markieren). Neue editierbare Grid-Spalten übernehmen denselben Style/Handler.
+
 ## PDF-Engine: Syncfusion
 
 PDF-Anzeige und Stift-Annotation laufen über `Syncfusion.PdfViewer.WPF` (`Syncfusion.Windows.PdfViewer.PdfViewerControl`). Bewusste Entscheidung: kommerzielle Community-License-Komponente statt einer lizenzfreien Alternative (siehe Abwägung in der Planungs-Session) — falls das Projekt kommerzialisiert wird und die Umsatz-/Entwicklerzahl-Grenze der Community License überschritten wird, muss auf eine kostenpflichtige Syncfusion-Lizenz oder eine der geprüften Alternativen (PDF.js/WebView2, natives WPF-InkCanvas + PDFium/PDFsharp) migriert werden.

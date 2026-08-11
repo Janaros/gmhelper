@@ -6,26 +6,24 @@
              xmlns:local="clr-namespace:GMHelper.App"
              xmlns:views="clr-namespace:GMHelper.App.Views"
              mc:Ignorable="d">
-    <Grid Margin="8">
+    <Grid Margin="{StaticResource SubViewMargin}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="240" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <Grid Grid.Column="0" Margin="0,0,8,0">
+        <Grid Grid.Column="0" Margin="{StaticResource GutterMargin}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
-            <Button Grid.Row="0" Content="Neuer Charakter" HorizontalAlignment="Left" Margin="0,0,0,8" Command="{Binding NewCharacterCommand}" />
+            <Button Grid.Row="0" Content="Neuer Charakter" HorizontalAlignment="Left" Margin="0,0,0,12" Command="{Binding NewCharacterCommand}" />
 
             <TextBlock Grid.Row="1"
                        Text="{Binding StatusMessage}"
-                       Foreground="Red"
-                       TextWrapping="Wrap"
-                       Margin="0,0,0,8"
+                       Style="{StaticResource StatusTextStyle}"
                        Visibility="{Binding StatusMessage, Converter={x:Static local:NullToVisibilityConverter.Instance}}" />
 
             <ListBox x:Name="PlayerList"
@@ -35,7 +33,7 @@
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal">
-                            <CheckBox IsChecked="{Binding IsActive}" Click="ActiveCheckBox_Click" VerticalAlignment="Center" Margin="0,0,4,0" />
+                            <CheckBox IsChecked="{Binding IsActive}" Click="ActiveCheckBox_Click" VerticalAlignment="Center" Margin="0,0,8,0" />
                             <TextBlock Text="{Binding CharacterName}" VerticalAlignment="Center">
                                 <TextBlock.Style>
                                     <Style TargetType="TextBlock">
@@ -56,23 +54,25 @@
 
         <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto">
             <StackPanel>
-                <TextBlock Text="Charaktername" />
-                <TextBox Text="{Binding EditCharacterName, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,8" />
+                <TextBlock Text="Charaktername" Style="{StaticResource FieldLabelTextStyle}" />
+                <TextBox Text="{Binding EditCharacterName, UpdateSourceTrigger=PropertyChanged}" Margin="{StaticResource FieldMargin}" />
 
-                <TextBlock Text="Spieler (Person)" />
-                <TextBox Text="{Binding EditPlayerName, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,8" />
+                <TextBlock Text="Spieler (Person)" Style="{StaticResource FieldLabelTextStyle}" />
+                <TextBox Text="{Binding EditPlayerName, UpdateSourceTrigger=PropertyChanged}" Margin="{StaticResource FieldMargin}" />
 
-                <TextBlock Text="Initiative" />
-                <TextBox Text="{Binding EditInitiativeText, UpdateSourceTrigger=PropertyChanged}" Width="80" HorizontalAlignment="Left" Margin="0,0,0,8" />
+                <TextBlock Text="Initiative" Style="{StaticResource FieldLabelTextStyle}" />
+                <TextBox Text="{Binding EditInitiativeText, UpdateSourceTrigger=PropertyChanged}" Width="80" HorizontalAlignment="Left" Margin="{StaticResource FieldMargin}" />
 
-                <TextBlock Text="Notizen" />
-                <TextBox Text="{Binding EditNotes, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" Height="60" TextWrapping="Wrap" Margin="0,0,0,8" />
+                <TextBlock Text="Notizen" Style="{StaticResource FieldLabelTextStyle}" />
+                <TextBox Text="{Binding EditNotes, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" Height="72" TextWrapping="Wrap" Margin="{StaticResource FieldMargin}" />
 
-                <TextBlock Text="Werte" FontWeight="Bold" Margin="0,0,0,4" />
-                <views:StatFieldEditor ItemsSource="{Binding StatFields}" Height="200" Margin="0,0,0,8" />
+                <TextBlock Text="Werte" Style="{StaticResource SectionHeaderTextStyle}" />
+                <views:StatFieldEditor ItemsSource="{Binding StatFields}" Height="220" Margin="{StaticResource FieldMargin}" />
 
-                <Button Content="Speichern" HorizontalAlignment="Left" Command="{Binding SaveSelectedPlayerCommand}" Padding="8,4" Margin="0,0,0,8" />
-                <Button Content="Charakter löschen" HorizontalAlignment="Left" Command="{Binding DeleteSelectedPlayerCommand}" Padding="8,4" />
+                <StackPanel Orientation="Horizontal">
+                    <Button Content="Speichern" Command="{Binding SaveSelectedPlayerCommand}" />
+                    <Button Content="Charakter löschen" Command="{Binding DeleteSelectedPlayerCommand}" Margin="8,0,0,0" />
+                </StackPanel>
             </StackPanel>
         </ScrollViewer>
     </Grid>

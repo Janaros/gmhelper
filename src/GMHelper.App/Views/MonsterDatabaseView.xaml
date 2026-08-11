@@ -6,15 +6,15 @@
              xmlns:local="clr-namespace:GMHelper.App"
              xmlns:views="clr-namespace:GMHelper.App.Views"
              mc:Ignorable="d">
-    <Grid Margin="12">
+    <Grid Margin="{StaticResource ViewMargin}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="0,0,0,12">
+        <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="0,0,0,16">
             <Button Content="&lt; Zurück" Command="{Binding BackCommand}" />
-            <TextBlock Text="Monster-Datenbank" FontSize="18" FontWeight="Bold" Margin="12,0,0,0" VerticalAlignment="Center" />
+            <TextBlock Text="Monster-Datenbank" Style="{StaticResource PageTitleTextStyle}" Margin="12,0,0,0" />
         </StackPanel>
 
         <Grid Grid.Row="1">
@@ -23,14 +23,14 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-            <Grid Grid.Column="0" Margin="0,0,8,0">
+            <Grid Grid.Column="0" Margin="{StaticResource GutterMargin}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
-                <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,8">
+                <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,12">
                     <Button Content="Neues Monster" Command="{Binding NewMonsterCommand}" />
                     <Button Content="Importieren" Margin="8,0,0,0" Click="ImportButton_Click" />
                     <Button Content="Exportieren" Margin="8,0,0,0" Click="ExportButton_Click" />
@@ -38,9 +38,7 @@
 
                 <TextBlock Grid.Row="1"
                            Text="{Binding StatusMessage}"
-                           Foreground="Red"
-                           TextWrapping="Wrap"
-                           Margin="0,0,0,8"
+                           Style="{StaticResource StatusTextStyle}"
                            Visibility="{Binding StatusMessage, Converter={x:Static local:NullToVisibilityConverter.Instance}}" />
 
                 <ListBox x:Name="MonsterList"
@@ -56,19 +54,21 @@
                     <ColumnDefinition Width="220" />
                 </Grid.ColumnDefinitions>
 
-                <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto" Margin="0,0,8,0">
+                <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto" Margin="{StaticResource GutterMargin}">
                     <StackPanel>
-                        <TextBlock Text="Name" />
-                        <TextBox Text="{Binding EditName, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,8" />
+                        <TextBlock Text="Name" Style="{StaticResource FieldLabelTextStyle}" />
+                        <TextBox Text="{Binding EditName, UpdateSourceTrigger=PropertyChanged}" Margin="{StaticResource FieldMargin}" />
 
-                        <TextBlock Text="Notizen" />
-                        <TextBox Text="{Binding EditNotes, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" Height="60" TextWrapping="Wrap" Margin="0,0,0,8" />
+                        <TextBlock Text="Notizen" Style="{StaticResource FieldLabelTextStyle}" />
+                        <TextBox Text="{Binding EditNotes, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" Height="72" TextWrapping="Wrap" Margin="{StaticResource FieldMargin}" />
 
-                        <TextBlock Text="Werte" FontWeight="Bold" Margin="0,0,0,4" />
-                        <views:StatFieldEditor ItemsSource="{Binding StatFields}" Height="200" Margin="0,0,0,8" />
+                        <TextBlock Text="Werte" Style="{StaticResource SectionHeaderTextStyle}" />
+                        <views:StatFieldEditor ItemsSource="{Binding StatFields}" Height="220" Margin="{StaticResource FieldMargin}" />
 
-                        <Button Content="Speichern" HorizontalAlignment="Left" Command="{Binding SaveSelectedMonsterCommand}" Padding="8,4" Margin="0,0,0,8" />
-                        <Button Content="Monster löschen" HorizontalAlignment="Left" Command="{Binding DeleteSelectedMonsterCommand}" Padding="8,4" />
+                        <StackPanel Orientation="Horizontal">
+                            <Button Content="Speichern" Command="{Binding SaveSelectedMonsterCommand}" />
+                            <Button Content="Monster löschen" Command="{Binding DeleteSelectedMonsterCommand}" Margin="8,0,0,0" />
+                        </StackPanel>
                     </StackPanel>
                 </ScrollViewer>
 
@@ -78,7 +78,7 @@
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
 
-                    <Button Grid.Row="0" Content="Bild zuweisen" Margin="0,0,0,8" Click="AssignImageButton_Click" />
+                    <Button Grid.Row="0" Content="Bild zuweisen" Margin="0,0,0,12" Click="AssignImageButton_Click" />
                     <Image x:Name="PortraitImage" Grid.Row="1" Stretch="Uniform" />
                 </Grid>
             </Grid>

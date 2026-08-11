@@ -8,7 +8,7 @@
         Icon="/Assets/GMHelper.ico"
         Width="640" Height="480"
         WindowStartupLocation="CenterOwner">
-    <Grid Margin="12">
+    <Grid Margin="{StaticResource ViewMargin}">
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
@@ -30,8 +30,8 @@
         <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
             <TextBlock Text="Bei vorhandenem Namen:" VerticalAlignment="Center" Margin="0,0,8,0" />
             <ComboBox ItemsSource="{Binding ConflictStrategies}" SelectedItem="{Binding ConflictStrategy}" Width="140" Margin="0,0,16,0" />
-            <Button Content="Importieren" Click="ImportButton_Click" Padding="12,4" Margin="0,0,8,0" />
-            <Button Content="Abbrechen" Click="CancelButton_Click" Padding="12,4" />
+            <Button Content="Importieren" Click="ImportButton_Click" Margin="0,0,8,0" />
+            <Button Content="Abbrechen" Click="CancelButton_Click" />
         </StackPanel>
     </Grid>
 </Window>

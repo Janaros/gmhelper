@@ -5,14 +5,14 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:GMHelper.App"
              mc:Ignorable="d">
-    <Grid Margin="12">
+    <Grid Margin="{StaticResource ViewMargin}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="0,0,0,8">
+        <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="0,0,0,12">
             <TextBox Width="240" Text="{Binding NewCampaignName, UpdateSourceTrigger=PropertyChanged}" />
             <Button Content="Kampagne anlegen" Margin="8,0,0,0" Command="{Binding AddCampaignCommand}" />
             <Button Content="Öffnen" Margin="8,0,0,0" Command="{Binding OpenSelectedCampaignCommand}" />
@@ -21,8 +21,7 @@
 
         <TextBlock Grid.Row="1"
                    Text="{Binding StatusMessage}"
-                   Foreground="Red"
-                   Margin="0,0,0,8"
+                   Style="{StaticResource StatusTextStyle}"
                    Visibility="{Binding StatusMessage, Converter={x:Static local:NullToVisibilityConverter.Instance}}" />
 
         <Grid Grid.Row="2">
